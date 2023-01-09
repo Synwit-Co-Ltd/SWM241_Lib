@@ -1,0 +1,174 @@
+#include "SWM241.h"
+
+#include <RTL.h>
+
+/* 注意：
+*	为了简单，在RX_Conf_CM.c中配置所有Task都运行于特权等级，否则当Task中
+* 代码写某些内核寄存器（如调用NVIC_DisableIRQ())时就会触发HardFault
+************************************************************************/
+
+os_mbx_declare(queueADC, 16);
+
+__task void TaskINI(void);
+__task void TaskADC(void);
+__task void TaskPWM(void);
+void SerialInit(void);
+
+int main(void)
+{ 	
+ 	SystemInit();
+	
+	SerialInit();
+	
+	GPIO_Init(GPIOA, PIN5, 1, 0, 0, 0);		//调试指示信号
+	
+	os_sys_init(TaskINI);
+}
+
+__task void TaskINI(void)
+{
+	os_tsk_create(TaskADC, 1);
+	os_tsk_create(TaskPWM, 2);
+	
+	os_mbx_init(&queueADC, sizeof(queueADC));
+	
+	os_tsk_delete(os_tsk_self());
+}
+
+/****************************************************************************************************************************************** 
+* 函数名称:	TaskADC()
+* 功能说明: 启动ADC采集任务
+* 输    入: 无
+* 输    出: 无
+* 注意事项: 无
+******************************************************************************************************************************************/
+__task void TaskADC(void)
+{
+	ADC_InitStructure ADC_initStruct;
+	
+	PORT_Init(PORTA, PIN14, PORTA_PIN14_ADC_IN0, 0);//PA.14 => ADC.CH0
+	PORT_Init(PORTA, PIN13, PORTA_PIN13_ADC_IN1, 0);//PA.13 => ADC.CH1
+	
+	ADC_initStruct.clk_src = ADC_CLKSRC_HRC;
+	ADC_initStruct.clk_div = 12;
+	ADC_initStruct.ref_src = ADC_REFSRC_VREFP;
+	ADC_initStruct.channels = ADC_CH1;
+	ADC_initStruct.trig_src = ADC_TRIGSRC_TIMR2;
+	ADC_initStruct.samplAvg = ADC_AVG_SAMPLE2;
+	ADC_initStruct.Continue = 0;					//非连续模式，即单次模式
+	ADC_initStruct.EOC_IEn = ADC_CH1;
+	ADC_initStruct.OVF_IEn = 0;
+	ADC_Init(ADC, &ADC_initStruct);					//配置ADC
+	
+	ADC_Open(ADC);									//使能ADC
+	
+	TIMR_Init(TIMR2, TIMR_MODE_TIMER, SystemCoreClock/10, 0);	//每秒钟采样10次
+	TIMR_Start(TIMR2);
+	
+	while(1)
+	{
+		// do nothing
+		
+		os_dly_wait(500);
+	}
+}
+
+void ADC_Handler(void)
+{	
+	uint32_t val;
+	
+	ADC_IntEOCClr(ADC, ADC_CH1);	//清除中断标志
+	
+	val = ADC_Read(ADC, ADC_CH1);
+	
+	isr_mbx_send(&queueADC, (void *)val);
+	
+	GPIO_InvBit(GPIOA, PIN5);
+}
+
+/****************************************************************************************************************************************** 
+* 函数名称:	TaskPWM()
+* 功能说明: 等待ADC转换结果，根据ADC转换结果设置PWM占空比
+* 输    入: 无
+* 输    出: 无
+* 注意事项: 无
+******************************************************************************************************************************************/
+__task void TaskPWM(void)
+{
+	uint16_t duty;
+	PWM_InitStructure  PWM_initStruct;
+	
+	PWM_initStruct.PWMnXN = 1;					//同时输出PWM0A和PWM0AN
+	PWM_initStruct.clkdiv = 8;					//F_PWM = 24M/8 = 3M
+	PWM_initStruct.cycle = 10000;				//3M/10000 = 300Hz，PWMnXN = 1时频率降低到150Hz
+	PWM_initStruct.hduty =  2500;				//2500/10000 = 25%
+	PWM_initStruct.initLevel = 1;
+	PWM_initStruct.HEndIE = 0;
+	PWM_initStruct.NCycleIE = 0;
+	PWM_initStruct.HCycleIE = 0;
+	PWM_Init(PWM0A, &PWM_initStruct);
+	PWM_Init(PWM0B, &PWM_initStruct);
+	PWM_Init(PWM1A, &PWM_initStruct);
+	PWM_Init(PWM1B, &PWM_initStruct);
+	
+	PORT_Init(PORTD, PIN1,  PORTD_PIN1_PWM0A,  0);
+	PORT_Init(PORTD, PIN0,  PORTD_PIN0_PWM0AN, 0);
+	PORT_Init(PORTC, PIN15, PORTC_PIN15_PWM0B, 0);
+	PORT_Init(PORTA, PIN5,  PORTA_PIN5_PWM0BN, 0);
+	PORT_Init(PORTB, PIN14, PORTB_PIN14_PWM1A, 0);
+	PORT_Init(PORTA, PIN4,  PORTA_PIN4_PWM1AN, 0);
+	PORT_Init(PORTA, PIN9,  PORTA_PIN9_PWM1B,  0);
+	PORT_Init(PORTA, PIN3,  PORTA_PIN3_PWM1BN, 0);
+	
+	PWM_Start(PWM0A);
+	PWM_Start(PWM0B);
+	PWM_Start(PWM1A);
+	PWM_Start(PWM1B);
+	
+	while(1)
+	{
+		if(os_mbx_wait(queueADC, (void *)&duty, 10) != OS_R_TMO)
+		{
+			if(duty <  10) duty =  10;
+			if(duty > 500) duty = 500;
+			
+			PWM_SetHDuty(PWM0A, 10000 * duty / 512);
+			PWM_SetHDuty(PWM0B, 10000 - PWM_GetHDuty(PWM0A));
+		}
+	}
+}
+
+void SerialInit(void)
+{
+	UART_InitStructure UART_initStruct;
+	
+	PORT_Init(PORTB, PIN11, PORTB_PIN11_UART0_RX, 1);	//GPIOB.11配置为UART0输入引脚
+	PORT_Init(PORTB, PIN12, PORTB_PIN12_UART0_TX, 0);	//GPIOB.12配置为UART0输出引脚
+ 	
+ 	UART_initStruct.Baudrate = 57600;
+	UART_initStruct.DataBits = UART_DATA_8BIT;
+	UART_initStruct.Parity = UART_PARITY_NONE;
+	UART_initStruct.StopBits = UART_STOP_1BIT;
+	UART_initStruct.RXThresholdIEn = 0;
+	UART_initStruct.TXThresholdIEn = 0;
+	UART_initStruct.TimeoutIEn = 0;
+ 	UART_Init(UART0, &UART_initStruct);
+	UART_Open(UART0);
+}
+
+/****************************************************************************************************************************************** 
+* 函数名称: fputc()
+* 功能说明: printf()使用此函数完成实际的串口打印动作
+* 输    入: int ch		要打印的字符
+*			FILE *f		文件句柄
+* 输    出: 无
+* 注意事项: 无
+******************************************************************************************************************************************/
+int fputc(int ch, FILE *f)
+{
+	UART_WriteByte(UART0, ch);
+	
+	while(UART_IsTXBusy(UART0));
+ 	
+	return ch;
+}
