@@ -14,14 +14,9 @@ extern void SystemInit(void);
 
 extern void SystemCoreClockUpdate (void);
 
-extern void PLLInit(void);
-	 
-extern void switchTo24MHz(void);
-extern void switchTo3MHz(void);
 extern void switchTo48MHz(void);
 extern void switchTo6MHz(void);
 extern void switchToXTAL(uint32_t div8);
-extern void switchToPLL(uint32_t div8);
 extern void switchTo32KHz(void);
 extern void switchToXTAL_32K(void);
 

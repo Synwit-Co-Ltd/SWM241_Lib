@@ -25,8 +25,6 @@
 /******************************************************************************************************************************************
  * 系统时钟设定
  *****************************************************************************************************************************************/
-#define SYS_CLK_24MHz		0	 	//0 内部高频24MHz RC振荡器
-#define SYS_CLK_3MHz		1		//1 内部高频 3MHz RC振荡器
 #define SYS_CLK_48MHz		2		//2 内部高频48MHz RC振荡器
 #define SYS_CLK_6MHz		3		//3 内部高频 6MHz RC振荡器
 #define SYS_CLK_XTAL		4		//4 外部晶体振荡器（2-32MHz）
@@ -34,10 +32,10 @@
 #define SYS_CLK_32KHz		8		//8 内部低频32KHz RC  振荡器
 #define SYS_CLK_XTAL_32K	9		//9 外部低频32KHz 晶体振荡器
 
-#define SYS_CLK   SYS_CLK_24MHz
+#define SYS_CLK   SYS_CLK_48MHz
 
 
-#define __HSI		(24000000UL)		//高速内部时钟
+#define __HSI		(48000000UL)		//高速内部时钟
 #define __LSI		(   32000UL)		//低速内部时钟
 #define __HSE		(24000000UL)		//高速外部时钟
 #define __LSE		(   32000UL)		//低速外部时钟
@@ -58,14 +56,7 @@ void SystemCoreClockUpdate(void)
 {
 	if(SYS->CLKSEL & SYS_CLKSEL_SYS_Msk)			//SYS  <= HRC
 	{
-		if(SYS->HRCCR & SYS_HRCCR_DBL_Msk)				//HRC = 48MHz
-		{
-			SystemCoreClock = __HSI*2;
-		}
-		else											//HRC = 24MHz
-		{
-			SystemCoreClock = __HSI;
-		}
+		SystemCoreClock = __HSI;
 	}
 	else											//SYS  <= CLK
 	{
@@ -85,7 +76,6 @@ void SystemCoreClockUpdate(void)
 		
 		case 4:
 			SystemCoreClock = __HSI;
-			if(SYS->HRCCR & SYS_HRCCR_DBL_Msk)  SystemCoreClock *= 2;
 			break;
 		}
 		
@@ -108,14 +98,6 @@ void SystemInit(void)
 	
 	switch(SYS_CLK)
 	{
-		case SYS_CLK_24MHz:
-			switchTo24MHz();
-			break;
-		
-		case SYS_CLK_3MHz:
-			switchTo3MHz();
-			break;
-		
 		case SYS_CLK_48MHz:
 			switchTo48MHz();
 			break;
@@ -144,32 +126,9 @@ void SystemInit(void)
 	SystemCoreClockUpdate();
 }
 
-void switchTo24MHz(void)
-{
-	SYS->HRCCR = (1 << SYS_HRCCR_ON_Pos) |
-				 (0 << SYS_HRCCR_DBL_Pos);			//HRC = 24Hz
-	
-	SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);		//SYS <= HRC
-}
-
-void switchTo3MHz(void)
-{
-	switchTo24MHz();
-	
-	SYS->CLKDIVx_ON = 1;
-	
-	SYS->CLKSEL &= ~SYS_CLKSEL_CLK_Msk;
-	SYS->CLKSEL |= (4 << SYS_CLKSEL_CLK_Pos);		//CLK <= HRC
-
-	SYS->CLKSEL |= (1 << SYS_CLKSEL_CLK_DIVx_Pos);
-	
-	SYS->CLKSEL &=~(1 << SYS_CLKSEL_SYS_Pos);		//SYS <= HRC/8
-}
-
 void switchTo48MHz(void)
 {
-	SYS->HRCCR = (1 << SYS_HRCCR_ON_Pos) |
-				 (1 << SYS_HRCCR_DBL_Pos);			//HRC = 48MHz
+	SYS->HRCCR = (1 << SYS_HRCCR_ON_Pos);			//HRC = 48MHz
 	
 	SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);		//SYS <= HRC
 }
@@ -192,7 +151,7 @@ void switchToXTAL(uint32_t div8)
 {
 	uint32_t i;
 	
-	switchTo24MHz();
+	switchTo48MHz();
 	
 	PORT_Init(PORTD, PIN2, PORTD_PIN2_XTAL_IN,  0);
 	PORT_Init(PORTD, PIN3, PORTD_PIN3_XTAL_OUT, 0);
@@ -212,7 +171,7 @@ void switchToXTAL(uint32_t div8)
 
 void switchTo32KHz(void)
 {
-	switchTo24MHz();
+	switchTo48MHz();
 	
 	SYS->LRCCR = (1 << SYS_LRCCR_ON_Pos);
 	
@@ -230,7 +189,7 @@ void switchToXTAL_32K(void)
 {
 	uint32_t i;
 	
-	switchTo24MHz();
+	switchTo48MHz();
 	
 	SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (1 << SYS_XTALCR_32KDRV_Pos);
 	for(i = 0; i < 1000; i++) __NOP();

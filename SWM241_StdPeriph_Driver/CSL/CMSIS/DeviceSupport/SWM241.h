@@ -282,8 +282,6 @@ typedef struct {
 
 #define SYS_HRCCR_ON_Pos			0		//High speed RC ON
 #define SYS_HRCCR_ON_Msk			(0x01 << SYS_HRCCR_ON_Pos)
-#define SYS_HRCCR_DBL_Pos		    1		//Double Frequency	0 24MHz	  1 48MHz
-#define SYS_HRCCR_DBL_Msk		    (0x01 << SYS_HRCCR_DBL_Pos)
 
 #define SYS_BODCR_IE_Pos		    1		//Interrupt Enable
 #define SYS_BODCR_IE_Msk		    (0x01 << SYS_BODCR_IE_Pos)
@@ -2551,8 +2549,8 @@ typedef struct {
 } FMC_TypeDef;
 
 
-#define FMC_ERASE_PAGE_Pos			0
-#define FMC_ERASE_PAGE_Msk			(0x1FFFF<< FMC_ERASE_PAGE_Pos)
+#define FMC_ERASE_ADDR_Pos			0
+#define FMC_ERASE_ADDR_Msk			(0x1FFFF<< FMC_ERASE_ADDR_Pos)
 #define FMC_ERASE_REQ_Pos			24
 #define FMC_ERASE_REQ_Msk			(0xFFu<< FMC_ERASE_REQ_Pos)
 
