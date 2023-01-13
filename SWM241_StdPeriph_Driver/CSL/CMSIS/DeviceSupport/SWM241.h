@@ -935,18 +935,18 @@ typedef struct {
 
 	__IO uint32_t CR;
 	
+		 uint32_t RESERVED;
+	
 	__IO uint32_t IE;
-	
-	__IO uint32_t IM;
-	
+
 	__IO uint32_t IF;
 	
 	__IO uint32_t HALT;						//[0] 1 暂停计数    0 恢复计数
 	
 	__IO uint32_t OCCR;
 	
-	__IO uint32_t OCMAT0;
-	__IO uint32_t OCMAT1;
+	__IO uint32_t OCMAT;
+	__IO uint32_t RESERVED2;
 	
 	__IO uint32_t ICLOW;
 	__IO uint32_t ICHIGH;
@@ -972,17 +972,6 @@ typedef struct {
 #define TIMR_IE_ICR_Msk				(0x01 << TIMR_IE_ICR_Pos)
 #define TIMR_IE_ICF_Pos				4		//输入捕获，下降沿中断
 #define TIMR_IE_ICF_Msk				(0x01 << TIMR_IE_ICF_Pos)
-
-#define TIMR_IM_TO_Pos				0
-#define TIMR_IM_TO_Msk				(0x01 << TIMR_IM_TO_Pos)
-#define TIMR_IM_OC0_Pos				1
-#define TIMR_IM_OC0_Msk				(0x01 << TIMR_IM_OC0_Pos)
-#define TIMR_IM_OC1_Pos				2
-#define TIMR_IM_OC1_Msk				(0x01 << TIMR_IM_OC1_Pos)
-#define TIMR_IM_ICR_Pos				3
-#define TIMR_IM_ICR_Msk				(0x01 << TIMR_IM_ICR_Pos)
-#define TIMR_IM_ICF_Pos				4
-#define TIMR_IM_ICF_Msk				(0x01 << TIMR_IM_ICF_Pos)
 
 #define TIMR_IF_TO_Pos				0		//超时中断标志，写1清零
 #define TIMR_IF_TO_Msk				(0x01 << TIMR_IF_TO_Pos)

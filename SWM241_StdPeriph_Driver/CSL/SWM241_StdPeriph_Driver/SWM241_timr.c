@@ -45,10 +45,9 @@ void TIMR_Init(TIMR_TypeDef * TIMRx, uint32_t mode, uint32_t clkdiv, uint32_t pe
 	TIMRx->PSC = clkdiv-1;
 	TIMRx->LOAD = period;
 	
-	TIMRx->IF = (1 << TIMR_IF_TO_Pos);
-	TIMRx->IE |= (1 << TIMR_IE_TO_Pos);
-	if(int_en) TIMRx->IM &= ~(1 << TIMR_IM_TO_Pos);
-	else       TIMRx->IM |=  (1 << TIMR_IM_TO_Pos);
+	TIMRx->IF = (1 << TIMR_IF_TO_Pos);		//清除中断标志
+	if(int_en) TIMRx->IE |=  (1 << TIMR_IE_TO_Pos);
+	else	   TIMRx->IE &= ~(1 << TIMR_IE_TO_Pos);
 	
 	switch((uint32_t)TIMRx)
 	{
@@ -246,7 +245,7 @@ uint32_t TIMR_GetCurValue(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_INTEn(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM &= ~(1 << TIMR_IM_TO_Pos);
+	TIMRx->IE |= (1 << TIMR_IE_TO_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -258,7 +257,7 @@ void TIMR_INTEn(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_INTDis(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM |= (1 << TIMR_IM_TO_Pos);
+	TIMRx->IE &= ~(1 << TIMR_IE_TO_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -297,15 +296,13 @@ uint32_t TIMR_INTStat(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_Init(TIMR_TypeDef * TIMRx, uint16_t match, uint32_t match_int_en, uint32_t init_lvl)
 {
-	TIMRx->OCMAT0 = match;
-	TIMRx->OCMAT1 = TIMRx->LOAD;
+	TIMRx->OCMAT = match;
 	if(init_lvl) TIMRx->OCCR |=  (1 << TIMR_OCCR_INITLVL_Pos);
 	else         TIMRx->OCCR &= ~(1 << TIMR_OCCR_INITLVL_Pos);
 	
 	TIMRx->IF = (1 << TIMR_IF_OC0_Pos);		//清除中断标志
-	TIMRx->IE |=  (1 << TIMR_IE_OC0_Pos);
-	if(match_int_en) TIMRx->IM &= ~(1 << TIMR_IM_OC0_Pos);
-	else             TIMRx->IM |=  (1 << TIMR_IM_OC0_Pos);
+	if(match_int_en) TIMRx->IE |=  (1 << TIMR_IE_OC0_Pos);
+	else             TIMRx->IE &= ~(1 << TIMR_IE_OC0_Pos);
 	
 	switch((uint32_t)TIMRx)
 	{
@@ -381,7 +378,7 @@ void TIMR_OC_OutputDis(TIMR_TypeDef * TIMRx, uint32_t level)
 ******************************************************************************************************************************************/
 void TIMR_OC_SetMatch(TIMR_TypeDef * TIMRx, uint16_t match)
 {
-	TIMRx->OCMAT0 = match;
+	TIMRx->OCMAT = match;
 }
 
 /****************************************************************************************************************************************** 
@@ -393,7 +390,7 @@ void TIMR_OC_SetMatch(TIMR_TypeDef * TIMRx, uint16_t match)
 ******************************************************************************************************************************************/
 uint16_t TIMR_OC_GetMatch(TIMR_TypeDef * TIMRx)
 {
-	return TIMRx->OCMAT0;
+	return TIMRx->OCMAT;
 }
 
 /****************************************************************************************************************************************** 
@@ -405,7 +402,7 @@ uint16_t TIMR_OC_GetMatch(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_INTEn(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM &= ~(1 << TIMR_IM_OC0_Pos);
+	TIMRx->IE |= (1 << TIMR_IE_OC0_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -417,7 +414,7 @@ void TIMR_OC_INTEn(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_INTDis(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM |= (1 << TIMR_IM_OC0_Pos);
+	TIMRx->IE &= ~(1 << TIMR_IE_OC0_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -459,12 +456,11 @@ void TIMR_IC_Init(TIMR_TypeDef * TIMRx, uint32_t start_edge, uint32_t captureH_i
 	TIMRx->CR &= ~TIMR_CR_ICEDGE_Msk;
 	TIMRx->CR |= (start_edge << TIMR_CR_ICEDGE_Pos);
 	
-	TIMRx->IF = (1 << TIMR_IF_ICR_Pos) | (1 << TIMR_IF_ICF_Pos);
-	TIMRx->IE |= (1 << TIMR_IE_ICR_Pos) | (1 << TIMR_IE_ICF_Pos);
-	if(captureH_int_en) TIMRx->IM &= ~(1 << TIMR_IM_ICF_Pos);
-	else                TIMRx->IM |=  (1 << TIMR_IM_ICF_Pos);
-	if(captureL_int_en) TIMRx->IM &= ~(1 << TIMR_IM_ICR_Pos);
-	else                TIMRx->IM |=  (1 << TIMR_IM_ICR_Pos);
+	TIMRx->IF = (TIMR_IF_ICR_Msk | TIMR_IF_ICF_Msk);
+	if(captureH_int_en) TIMRx->IE |=  (1 << TIMR_IE_ICF_Pos);
+	else                TIMRx->IE &= ~(1 << TIMR_IE_ICF_Pos);
+	if(captureL_int_en) TIMRx->IE |=  (1 << TIMR_IE_ICR_Pos);
+	else                TIMRx->IE &= ~(1 << TIMR_IE_ICR_Pos);
 	
 	switch((uint32_t)TIMRx)
 	{
@@ -535,7 +531,7 @@ uint32_t TIMR_IC_GetCaptureL(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_IC_CaptureH_INTEn(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM &= ~(1 << TIMR_IE_ICF_Pos);
+	TIMRx->IE |= (1 << TIMR_IE_ICF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -547,7 +543,7 @@ void TIMR_IC_CaptureH_INTEn(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_IC_CaptureH_INTDis(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM |= (1 << TIMR_IM_ICF_Pos);
+	TIMRx->IE &= ~(1 << TIMR_IE_ICF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -583,7 +579,7 @@ uint32_t TIMR_IC_CaptureH_INTStat(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_IC_CaptureL_INTEn(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM &= ~(1 << TIMR_IM_ICR_Pos);
+	TIMRx->IE |= (1 << TIMR_IE_ICR_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -595,7 +591,7 @@ void TIMR_IC_CaptureL_INTEn(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_IC_CaptureL_INTDis(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IM |= (1 << TIMR_IM_ICR_Pos);
+	TIMRx->IE &= ~(1 << TIMR_IE_ICR_Pos);
 }
 
 /****************************************************************************************************************************************** 

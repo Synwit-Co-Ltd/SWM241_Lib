@@ -37,7 +37,7 @@
 #define SYS_CLK   SYS_CLK_24MHz
 
 
-#define __HSI		(26000000UL)		//高速内部时钟
+#define __HSI		(24000000UL)		//高速内部时钟
 #define __LSI		(   32000UL)		//低速内部时钟
 #define __HSE		(24000000UL)		//高速外部时钟
 #define __LSE		(   32000UL)		//低速外部时钟
