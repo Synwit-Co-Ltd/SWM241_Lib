@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>SWM241xB</Device>
           <Vendor>Synwit</Vendor>
-          <PackID>Synwit.SWM32_New.0.0.4</PackID>
+          <PackID>Synwit.SWM32_New.0.0.7</PackID>
           <PackURL>http://www.synwit.com/pack</PackURL>
           <Cpu>CLOCK(12000000) CPUTYPE("Cortex-M0") ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -504,5 +504,14 @@
     <components/>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>SWM241_StdPeriph_Driver</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

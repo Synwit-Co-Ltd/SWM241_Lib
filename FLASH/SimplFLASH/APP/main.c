@@ -1,20 +1,15 @@
 #include "SWM241.h"
 
 
-/* 注意：SWM241_Flash.c中的函数必须在RAM中执行，Keil下实现方法有：
-   方法一、Scatter file
-   方法二、SWM240_Flash.c上右键 =》Options for File "SWM241_Flash.c" =》Properties =》Memory Assignment =》Code/Conts 选择 IRAM1
-*/
-
-
-void SerialInit(void);
-
 #define EEPROM_ADDR	  0x8000
 
 uint32_t WrBuff[20] = {0x14141414, 0x15151515, 0x16161616, 0x17171717, 0x18181818,
 				       0x19191919, 0x1A1A1A1A, 0x1B1B1B1B, 0x1C1C1C1C, 0x1D1D1D1D,
 				       0x1E1E1E1E, 0x1F1F1F1F, 0x20202020, 0x21212121, 0x22222222,
 				       0x23232323, 0x24242424, 0x25252525, 0x26262626, 0x27272727};
+
+					   
+void SerialInit(void);
 
 int main(void)
 {
@@ -46,8 +41,8 @@ void SerialInit(void)
 {
 	UART_InitStructure UART_initStruct;
 	
-	PORT_Init(PORTB, PIN11, PORTB_PIN11_UART0_RX, 1);	//GPIOB.11配置为UART0输入引脚
-	PORT_Init(PORTB, PIN12, PORTB_PIN12_UART0_TX, 0);	//GPIOB.12配置为UART0输出引脚
+	PORT_Init(PORTA, PIN5, PORTA_PIN5_UART0_RX, 1);	//GPIOA.5配置为UART0输入引脚
+	PORT_Init(PORTA, PIN4, PORTA_PIN4_UART0_TX, 0);	//GPIOA.4配置为UART0输出引脚
  	
 	UART_initStruct.Baudrate = 57600;
 	UART_initStruct.DataBits = UART_DATA_8BIT;

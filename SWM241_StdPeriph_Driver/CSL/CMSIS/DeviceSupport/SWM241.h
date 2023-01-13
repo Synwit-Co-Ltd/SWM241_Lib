@@ -2544,62 +2544,28 @@ typedef struct {
 typedef struct {
 	__IO uint32_t DATA;
 	
-	__IO uint32_t ADDR;
+	__IO uint32_t ADDR;						//programming address
 	
 	__IO uint32_t ERASE;
 	
-	__IO uint32_t REMAP;
+	__IO uint32_t PROGEN;					//[0] programming enable
 	
 	__IO uint32_t CFG0;
 	
 	__IO uint32_t CFG1;
 	
-	__IO uint32_t CFG2;
-	
-	     uint32_t RESERVED;
-	
 	__IO uint32_t STAT;
+	
+	     uint32_t RESERVED[3];
+	
+	__IO uint32_t REMAP;
 } FMC_TypeDef;
 
 
-#define FMC_ADDR_ADDR_Pos			0
-#define FMC_ADDR_ADDR_Msk			(0xFFFF<<FMC_ADDR_ADDR_Pos)
-#define FMC_ADDR_BUSY_Pos			30		//1 正在执行写入操作
-#define FMC_ADDR_BUSY_Msk			(0x01 << FMC_ADDR_BUSY_Pos)
-#define FMC_ADDR_WREN_Pos			31		//Write Enable
-#define FMC_ADDR_WREN_Msk			(0x01u<< FMC_ADDR_WREN_Pos)
-
-#define FMC_ERASE_PAGE_Pos			10
-#define FMC_ERASE_PAGE_Msk			(0x3F << FMC_ERASE_PAGE_Pos)
-#define FMC_ERASE_CHIP_Pos			16		//1 整片擦除
-#define FMC_ERASE_CHIP_Msk			(0x01 << FMC_ERASE_CHIP_Pos)
-#define FMC_ERASE_REQ_Pos			31
-#define FMC_ERASE_REQ_Msk			(0x01u<< FMC_ERASE_REQ_Pos)
-
-#define FMC_REMAP_ON_Pos			0
-#define FMC_REMAP_ON_Msk			(0x01 << FMC_REMAP_ON_Pos)
-#define FMC_REMAP_OFFSET_Pos		1		//对0x000-0x800这2K地址的访问映射到2K*OFFSET-2K*(OFFSET+1)地址处
-#define FMC_REMAP_OFFSET_Msk		(0x3F << FMC_REMAP_OFFSET_Pos)
-
-#define FMC_CFG0_1US_Pos			4		//1us对应多少个时钟周期，0表示1个周期
-#define FMC_CFG0_1US_Msk			(0x7F << FMC_CFG0_1US_Pos)
-#define FMC_CFG0_CLK_Pos			16		//当前时钟范围，0 25~50MHz   1 <25MHz   2 50~75MHz  3 75~100MHz
-#define FMC_CFG0_CLK_Msk			(0x03 << FMC_CFG0_CLK_Pos)
-
-#define FMC_CFG1_TERASE_Pos			0		//terase参数要求多少ms
-#define FMC_CFG1_TERASE_Msk			(0x1F << FMC_CFG1_TERASE_Pos)
-#define FMC_CFG1_TNVH1_Pos			5
-#define FMC_CFG1_TNVH1_Msk			(0x7F << FMC_CFG1_TNVH1_Pos)
-#define FMC_CFG1_TRCV_Pos			12
-#define FMC_CFG1_TRCV_Msk			(0x03 << FMC_CFG1_TRCV_Pos)
-#define FMC_CFG1_TNVH_Pos			14
-#define FMC_CFG1_TNVH_Msk			(0x07 << FMC_CFG1_TNVH_Pos)
-#define FMC_CFG1_TPROG_Pos			17
-#define FMC_CFG1_TPROG_Msk			(0x3F << FMC_CFG1_TPROG_Pos)
-#define FMC_CFG1_TPGS_Pos			23
-#define FMC_CFG1_TPGS_Msk			(0x0F << FMC_CFG1_TPGS_Pos)
-#define FMC_CFG1_TNVS_Pos			27
-#define FMC_CFG1_TNVS_Msk			(0x07 << FMC_CFG1_TNVS_Pos)
+#define FMC_ERASE_PAGE_Pos			0
+#define FMC_ERASE_PAGE_Msk			(0x1FFFF<< FMC_ERASE_PAGE_Pos)
+#define FMC_ERASE_REQ_Pos			24
+#define FMC_ERASE_REQ_Msk			(0xFFu<< FMC_ERASE_REQ_Pos)
 
 #define FMC_STAT_ERASEBUSY_Pos		0
 #define FMC_STAT_ERASEBUSY_Msk		(0x01 << FMC_STAT_ERASEBUSY_Pos)
@@ -2607,10 +2573,17 @@ typedef struct {
 #define FMC_STAT_PROGBUSY_Msk		(0x01 << FMC_STAT_PROGBUSY_Pos)
 #define FMC_STAT_READBUSY_Pos		2
 #define FMC_STAT_READBUSY_Msk		(0x01 << FMC_STAT_READBUSY_Pos)
-#define FMC_STAT_PROGDONE_Pos		3
-#define FMC_STAT_PROGDONE_Msk		(0x01 << FMC_STAT_PROGDONE_Pos)
-#define FMC_STAT_ERASEDONE_Pos		4
-#define FMC_STAT_ERASEDONE_Msk		(0x01 << FMC_STAT_ERASEDONE_Pos)
+#define FMC_STAT_FIFOEMPTY_Pos		3
+#define FMC_STAT_FIFOEMPTY_Msk		(0x01 << FMC_STAT_FIFOEMPTY_Pos)
+#define FMC_STAT_FIFOFULL_Pos		4
+#define FMC_STAT_FIFOFULL_Msk		(0x01 << FMC_STAT_FIFOFULL_Pos)
+#define FMC_STAT_FLASHIDLE_Pos		31
+#define FMC_STAT_FLASHIDLE_Msk		(0x01u<< FMC_STAT_FLASHIDLE_Pos)
+
+#define FMC_REMAP_ON_Pos			0
+#define FMC_REMAP_ON_Msk			(0x01 << FMC_REMAP_ON_Pos)
+#define FMC_REMAP_OFFSET_Pos		1		//对0x000-0x800这2K地址的访问映射到2K*OFFSET-2K*(OFFSET+1)地址处
+#define FMC_REMAP_OFFSET_Msk		(0x3F << FMC_REMAP_OFFSET_Pos)
 
 
 

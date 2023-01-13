@@ -19,33 +19,29 @@
 #include "SWM241.h"
 #include "SWM241_flash.h"
 
-typedef uint32_t (*IAPFunc1)(uint32_t addr);
-typedef uint32_t (*IAPFunc2)(uint32_t faddr, uint32_t raddr, uint32_t cnt);
+typedef int  (*IAP_Flash_Param_t)(uint32_t param, uint32_t flag);
+typedef int  (*IAP_Flash_Erase_t)(uint32_t sector, uint32_t flag);
+typedef int  (*IAP_Flash_Write_t)(uint32_t flash_addr, uint32_t ram_addr, uint32_t count);
 
-IAPFunc1 FLASH_PageErase = (IAPFunc1)0x1000501;
 
-IAPFunc2 FLASH_PageWrite = (IAPFunc2)0x1000601;
+IAP_Flash_Param_t IAP_Flash_Param = (IAP_Flash_Param_t)0x110004C1;
+IAP_Flash_Erase_t IAP_Flash_Erase = (IAP_Flash_Erase_t)0x11000401;
+IAP_Flash_Write_t IAP_Flash_Write = (IAP_Flash_Write_t)0x11000451;
 
 
 /****************************************************************************************************************************************** 
-* 函数名称:	FLASH_Erase()
-* 功能说明:	FLASH扇区擦除，每个扇区1K字节
-* 输    入: uint32_t addr		要擦除扇区的地址，必须1K对齐，即addr%1024 == 0
+* 函数名称: FLASH_Erase()
+* 功能说明:	片内Flash擦除
+* 输    入: uint32_t addr		擦除地址，扇区大小为1K Byte
 * 输    出: uint32_t			FLASH_RES_OK、FLASH_RES_TO、FLASH_RES_ERR
 * 注意事项: 无
 ******************************************************************************************************************************************/
-#if defined ( __ICCARM__ )
-__ramfunc
-#endif
 uint32_t FLASH_Erase(uint32_t addr)
-{
-	if(addr >= 64*1024) return FLASH_RES_ERR;
-	
+{	
 	__disable_irq();
 	
-	FMC->ERASE = (1u << FMC_ERASE_REQ_Pos) | ((addr >> 10) << FMC_ERASE_PAGE_Pos);
-	while(FMC->STAT & FMC_STAT_ERASEBUSY_Msk) __NOP();
-	
+	IAP_Flash_Erase(addr / 0x400, 0x0B11FFAC);
+		
 	__enable_irq();
 	
 	return FLASH_RES_OK;
@@ -53,37 +49,20 @@ uint32_t FLASH_Erase(uint32_t addr)
 
 
 /****************************************************************************************************************************************** 
-* 函数名称:	FLASH_Write()
-* 功能说明:	FLASH数据写入
-* 输    入: uint32_t addr		数据要写入到Flash中的地址，字对齐
-*			uint32_t buff[]		要写入Flash中的数据
-*			uint32_t cnt		要写的数据的个数，以字为单位，最大256
+* 函数名称: FLASH_Write()
+* 功能说明:	片内Flash写入
+* 输    入: uint32_t addr		写入地址
+*			uint32_t buff[]		要写入的数据
+*			uint32_t count		要写入数据的个数，以字为单位，且必须是2的整数倍，即最少写入2个字
 * 输    出: uint32_t			FLASH_RES_OK、FLASH_RES_TO、FLASH_RES_ERR
-* 注意事项: 要写入的数据必须全部在同一页内，每页1K，即addr/1024 == (addr+(cnt-1)*4)/1024
+* 注意事项: 写入数据个数必须是2的整数倍，即最少写入2个字
 ******************************************************************************************************************************************/
-#if defined ( __ICCARM__ )
-__ramfunc
-#endif
-uint32_t FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t cnt)
-{	
-	uint32_t i;
-	
-	if((addr+cnt*4) >= 64*1024) return FLASH_RES_ERR;
-	
-	if(addr/1024 != (addr+(cnt-1)*4)/1024) return FLASH_RES_ERR;	// 跨页
-	
+uint32_t FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
+{
 	__disable_irq();
 	
-	FMC->ADDR = (1u << FMC_ADDR_WREN_Pos) | (addr << FMC_ADDR_ADDR_Pos);
-	for(i = 0; i < cnt; i++)
-	{
-		FMC->DATA = buff[i];
-		while(FMC->ADDR & FMC_ADDR_BUSY_Msk) __NOP();
-	}
-	while(FMC->STAT & FMC_STAT_PROGBUSY_Msk) __NOP();
-	
-	FMC->ADDR = 0;
-	
+	IAP_Flash_Write(addr, (uint32_t)buff, count);
+		
 	__enable_irq();
 	
 	return FLASH_RES_OK;
