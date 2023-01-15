@@ -44,7 +44,7 @@ int main(void)
 	
 	SLED_initStruct.duty = SLED_DUTY_8;
 	SLED_initStruct.clkdiv = SLED_CLKDIV_1024;
-	SLED_initStruct.period = 50;		// 24MHz / 1024 / 50 / 8 = 58Hz
+	SLED_initStruct.period = 50;		// 48MHz / 2 / 1024 / 8 / (50 + 1) = 57.4Hz
 	SLED_initStruct.high   = 45;		// 45 / 50 = 90%
 	SLED_initStruct.cominv = 0;
    	SLED_Init(SLED, &SLED_initStruct);
