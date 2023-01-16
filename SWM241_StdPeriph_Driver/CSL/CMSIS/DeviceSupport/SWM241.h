@@ -1499,8 +1499,8 @@ typedef struct {
 	
 	__IO uint32_t TRGMSK;					//对应位置1后，则相应通道触发ADC功能被屏蔽
 	
-		 uint32_t RESERVED4[15];
-		
+		 uint32_t RESERVED4[16];
+		 
 	__IO uint32_t CALIBSET;
 	
 	__IO uint32_t CALIBEN;
