@@ -37,7 +37,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTA_PIN4_PWM1AN		2
 #define PORTA_PIN4_TIMR7_IN		3
 #define PORTA_PIN4_TIMR7_OUT	4
-#define PORTA_PIN7_SLCD_SEG19	15
+#define PORTA_PIN4_SLCD_SEG19	15
 
 #define PORTA_PIN5_GPIO			0
 #define PORTA_PIN5_UART0_RX		1
