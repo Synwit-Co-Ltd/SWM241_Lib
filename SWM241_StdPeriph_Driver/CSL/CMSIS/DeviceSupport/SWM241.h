@@ -1712,6 +1712,8 @@ typedef struct {
 
 #define ADC_CTRL3_REFPSEL_Pos		2		//0 Vrefp pin   1 VDD
 #define ADC_CTRL3_REFPSEL_Msk		(0x03 << ADC_CTRL3_REFPSEL_Pos)
+#define ADC_CTRL3_CLKDIV0_Pos		3
+#define ADC_CTRL3_CLKDIV0_Msk		(0x03 << ADC_CTRL3_CLKDIV0_Pos)
 
 #define ADC_CALIBSET_OFFSET_Pos		0
 #define ADC_CALIBSET_OFFSET_Msk		(0x1FF<< ADC_CALIBSET_OFFSET_Pos)

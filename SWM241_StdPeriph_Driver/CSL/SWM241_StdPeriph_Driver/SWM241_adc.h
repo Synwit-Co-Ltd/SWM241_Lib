@@ -27,15 +27,28 @@ typedef struct {
 #define ADC_CH10	0x400
 #define ADC_CH11	0x800
 
-#define ADC_CLKSRC_HRC			0
-#define ADC_CLKSRC_XTAL			1
-#define ADC_CLKSRC_PLL     		2
-#define ADC_CLKSRC_HRC_DIV4		(0 + 4*2)
-#define ADC_CLKSRC_XTAL_DIV4	(1 + 4*2)
-#define ADC_CLKSRC_PLL_DIV4   	(2 + 4*2)
-#define ADC_CLKSRC_HRC_DIV8		(0 + 4*3)
-#define ADC_CLKSRC_XTAL_DIV8	(1 + 4*3)
-#define ADC_CLKSRC_PLL_DIV8    	(2 + 4*3)
+/*  clk_src（SYS->CLKSEL.ADC）:  0 HRC   1 XTAL
+	sys_div（SYS->CLKSEL.ADC）:  0 1分频   2 4分频   3 8分频
+	adc_div0（ADC->CTRL4.CLKDIV0）: 0 4分频   1 2分频   2 1分频
+	adc_div1（ADC->CTRL2.CLKDIV1）: 0 4分频   1 2分频   2 1分频
+*/
+#define ADC_CLKSRC(clk_src, sys_div, adc_div0, adc_div1) \
+			(clk_src | (sys_div << 2) | (adc_div0 << 4) | (adc_div1 << 6))
+
+#define ADC_CLKSRC_HRC			ADC_CLKSRC(0, 0, 2, 2)
+#define ADC_CLKSRC_XTAL			ADC_CLKSRC(1, 0, 2, 2)
+#define ADC_CLKSRC_HRC_DIV2		ADC_CLKSRC(0, 0, 2, 1)
+#define ADC_CLKSRC_XTAL_DIV2	ADC_CLKSRC(1, 0, 2, 1)
+#define ADC_CLKSRC_HRC_DIV4		ADC_CLKSRC(0, 0, 2, 0)
+#define ADC_CLKSRC_XTAL_DIV4	ADC_CLKSRC(1, 0, 2, 0)
+#define ADC_CLKSRC_HRC_DIV8		ADC_CLKSRC(0, 0, 0, 1)
+#define ADC_CLKSRC_XTAL_DIV8	ADC_CLKSRC(1, 0, 0, 1)
+#define ADC_CLKSRC_HRC_DIV16	ADC_CLKSRC(0, 0, 0, 0)
+#define ADC_CLKSRC_XTAL_DIV16	ADC_CLKSRC(1, 0, 0, 0)
+#define ADC_CLKSRC_HRC_DIV32	ADC_CLKSRC(0, 2, 0, 1)
+#define ADC_CLKSRC_XTAL_DIV32	ADC_CLKSRC(1, 2, 0, 1)
+#define ADC_CLKSRC_HRC_DIV64	ADC_CLKSRC(0, 2, 0, 0)
+#define ADC_CLKSRC_XTAL_DIV64	ADC_CLKSRC(1, 2, 0, 0)
 
 #define ADC_REFSRC_VREFP		0	//Vrefp 引脚
 #define ADC_REFSRC_VDD			1	//芯片VDD

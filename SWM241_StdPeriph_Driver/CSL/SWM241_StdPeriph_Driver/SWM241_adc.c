@@ -54,15 +54,18 @@ void ADC_Init(ADC_TypeDef * ADCx, ADC_InitStructure * initStruct)
 	ADCx->CTRL1 &= ~ADC_CTRL1_CLKSRC_Msk;
 	ADCx->CTRL1 |= (0 << ADC_CTRL1_CLKSRC_Pos);
 	SYS->CLKSEL &= ~(SYS_CLKSEL_ADC_Msk | SYS_CLKSEL_ADCDIV_Msk);
-	SYS->CLKSEL |= (initStruct->clk_src << SYS_CLKSEL_ADC_Pos);
+	SYS->CLKSEL |= ((initStruct->clk_src & 0xF) << SYS_CLKSEL_ADC_Pos);
+	
+	ADCx->CTRL3 &= ~ADC_CTRL3_CLKDIV0_Msk;
+	ADCx->CTRL3 |= (((initStruct->clk_src >> 4) & 3) << ADC_CTRL3_CLKDIV0_Pos);
 	
 	ADCx->CTRL2 &= ~(ADC_CTRL2_ADCEVCM_Msk | ADC_CTRL2_PGAEVCM_Msk | ADC_CTRL2_PGAGAIN_Msk | ADC_CTRL2_VCMSEL_Msk | ADC_CTRL2_CLKDIV1_Msk | ADC_CTRL2_CLKDIV2_Msk);
- 	ADCx->CTRL2 |=  (PGA_VCM_EXTERNAL     << ADC_CTRL2_ADCEVCM_Pos) |
-					(PGA_VCM_EXTERNAL     << ADC_CTRL2_PGAEVCM_Pos) |
-					(7                    << ADC_CTRL2_PGAGAIN_Pos) |
-					(7                    << ADC_CTRL2_VCMSEL_Pos)  |
-					(1                    << ADC_CTRL2_CLKDIV1_Pos) |
-					(initStruct->clk_div  << ADC_CTRL2_CLKDIV2_Pos);
+ 	ADCx->CTRL2 |=  (PGA_VCM_EXTERNAL           << ADC_CTRL2_ADCEVCM_Pos) |
+					(PGA_VCM_EXTERNAL           << ADC_CTRL2_PGAEVCM_Pos) |
+					(7                          << ADC_CTRL2_PGAGAIN_Pos) |
+					(7                          << ADC_CTRL2_VCMSEL_Pos)  |
+					((initStruct->clk_src >> 6) << ADC_CTRL2_CLKDIV1_Pos) |
+					(initStruct->clk_div        << ADC_CTRL2_CLKDIV2_Pos);
 	
 	ADCx->CTRL3 &= ~ADC_CTRL3_REFPSEL_Msk;
 	ADCx->CTRL3 |= (initStruct->ref_src << ADC_CTRL3_REFPSEL_Pos);
