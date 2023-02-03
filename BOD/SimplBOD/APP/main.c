@@ -8,9 +8,9 @@ int main(void)
 	GPIO_Init(GPIOA, PIN5, 1, 0, 0, 0);			//输出，接LED
 	
 	SYS->BODCR = (1 << SYS_BODCR_IE_Pos) |
-				 (0 << SYS_BODCR_INTLVL_Pos);	//2.7V产生中断
+				 (6 << SYS_BODCR_INTLVL_Pos);	//4.1V产生中断
 	
-	NVIC_EnableIRQ(BOD_PWMBRK_GPIOC7_IRQn);
+	NVIC_EnableIRQ(BOD_PWMBRK_GPIOD11_IRQn);
 		
 	while(1==1)
 	{
@@ -18,7 +18,7 @@ int main(void)
 	}
 }
 
-void BOD_PWMBRK_GPIOC7_Handler(void)
+void BOD_PWMBRK_GPIOD11_Handler(void)
 {
 	GPIO_SetBit(GPIOA, PIN5);
 }
