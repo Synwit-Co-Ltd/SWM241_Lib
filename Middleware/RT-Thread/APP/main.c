@@ -70,7 +70,7 @@ void TaskADC(void *arg)
 	
 	ADC_Open(ADC);									//使能ADC
 	
-	TIMR_Init(TIMR2, TIMR_MODE_TIMER, SystemCoreClock/10, 0);	//每秒钟采样10次
+	TIMR_Init(TIMR2, TIMR_MODE_TIMER, CyclesPerUs, 100000, 0);	//每秒钟采样10次
 	TIMR_Start(TIMR2);
 	
 	while(1)
@@ -102,26 +102,32 @@ void TaskPWM(void *arg)
 	rt_uint32_t duty;
 	PWM_InitStructure  PWM_initStruct;
 	
-	PWM_initStruct.clk_div = PWM_CLKDIV_4;		//F_PWM = 24M/4 = 6M
+	PWM_initStruct.PWMnXN = 1;					//????PWM0A?PWM0AN
+	PWM_initStruct.clkdiv = 8;					//F_PWM = 24M/8 = 3M
+	PWM_initStruct.cycle = 10000;				//3M/10000 = 300Hz,PWMnXN = 1??????150Hz
+	PWM_initStruct.hduty =  2500;				//2500/10000 = 25%
+	PWM_initStruct.initLevel = 1;
+	PWM_initStruct.HEndIE = 0;
+	PWM_initStruct.NCycleIE = 0;
+	PWM_initStruct.HCycleIE = 0;
+	PWM_Init(PWM0A, &PWM_initStruct);
+	PWM_Init(PWM0B, &PWM_initStruct);
+	PWM_Init(PWM1A, &PWM_initStruct);
+	PWM_Init(PWM1B, &PWM_initStruct);
 	
-	PWM_initStruct.mode = PWM_MODE_INDEP;		//A路和B路独立输出					
-	PWM_initStruct.cycleA = 10000;				//6M/10000 = 600Hz			
-	PWM_initStruct.hdutyA =  2500;				//2500/10000 = 25%
-	PWM_initStruct.initLevelA = 1;
-	PWM_initStruct.cycleB = 10000;
-	PWM_initStruct.hdutyB =  5000;				//5000/10000 = 50%
-	PWM_initStruct.initLevelB = 1;
-	PWM_initStruct.HEndAIEn = 0;
-	PWM_initStruct.NCycleAIEn = 0;
-	PWM_initStruct.HEndBIEn = 0;
-	PWM_initStruct.NCycleBIEn = 0;
+	PORT_Init(PORTD, PIN1,  PORTD_PIN1_PWM0A,  0);
+	PORT_Init(PORTD, PIN0,  PORTD_PIN0_PWM0AN, 0);
+	PORT_Init(PORTA, PIN9,  PORTA_PIN9_PWM0B,  0);
+	PORT_Init(PORTA, PIN5,  PORTA_PIN5_PWM0BN, 0);
+	PORT_Init(PORTA, PIN3,  PORTA_PIN3_PWM1A,  0);
+	PORT_Init(PORTA, PIN4,  PORTA_PIN4_PWM1AN, 0);
+	PORT_Init(PORTD, PIN15, PORTD_PIN15_PWM1B, 0);
+	PORT_Init(PORTD, PIN14, PORTD_PIN14_PWM1BN,0);
 	
-	PWM_Init(PWM0, &PWM_initStruct);
-	
-	PORT_Init(PORTA, PIN3,  PORTA_PIN3_PWM0A, 0);
-	PORT_Init(PORTB, PIN2,  PORTB_PIN2_PWM0B, 0);
-	
-	PWM_Start(PWM0, 1, 1);
+	PWM_Start(PWM0A);
+	PWM_Start(PWM0B);
+	PWM_Start(PWM1A);
+	PWM_Start(PWM1B);
 	
 	while(1)
 	{
@@ -130,8 +136,8 @@ void TaskPWM(void *arg)
 			if(duty <  10) duty =  10;
 			if(duty > 500) duty = 500;
 			
-			PWM_SetHDuty(PWM0, PWM_CH_A, 10000 * duty / 512);
-			PWM_SetHDuty(PWM0, PWM_CH_B, 10000 - PWM_GetHDuty(PWM0, PWM_CH_A));
+			PWM_SetHDuty(PWM0A, 10000 * duty / 512);
+			PWM_SetHDuty(PWM0B, 10000 - PWM_GetHDuty(PWM0A));
 		}
 	}
 }
