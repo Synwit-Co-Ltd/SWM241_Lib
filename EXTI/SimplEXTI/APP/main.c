@@ -11,7 +11,7 @@ int main(void)
 	
 	EXTI_Init(GPIOA, PIN0, EXTI_FALL_EDGE);		//ÏÂ½µÑØ´¥·¢ÖÐ¶Ï
 	
-	NVIC_EnableIRQ(GPIOA0_GPIOC6_IRQn);
+	NVIC_EnableIRQ(GPIOA0_GPIOD6_IRQn);
 	
 	EXTI_Open(GPIOA, PIN0);
 	
@@ -20,7 +20,7 @@ int main(void)
 	}
 }
 
-void GPIOA0_GPIOC6_Handler(void)
+void GPIOA0_GPIOD6_Handler(void)
 {
 	EXTI_Clear(GPIOA, PIN0);
 	
