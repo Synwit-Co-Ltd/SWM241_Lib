@@ -1304,6 +1304,10 @@ typedef struct {
 #define SPI_IE_WTC_Msk				(0x01 << SPI_IE_WTC_Pos)
 #define SPI_IE_FTC_Pos				9		//Frame Transmit Complete
 #define SPI_IE_FTC_Msk				(0x01 << SPI_IE_FTC_Pos)
+#define SPI_IE_SSFALL_Pos			10		//Slave Select Fall Edge
+#define SPI_IE_SSFALL_Msk			(0x01 << SPI_IE_SSFALL_Pos)
+#define SPI_IE_SSRISE_Pos			11		//Slave Select Rise Edge
+#define SPI_IE_SSRISE_Msk			(0x01 << SPI_IE_SSRISE_Pos)
 
 #define SPI_IF_RFOV_Pos				0		//写1清零
 #define SPI_IF_RFOV_Msk				(0x01 << SPI_IF_RFOV_Pos)
@@ -1323,8 +1327,10 @@ typedef struct {
 #define SPI_IF_WTC_Msk				(0x01 << SPI_IF_WTC_Pos)
 #define SPI_IF_FTC_Pos				9		//Frame Transmit Complete，WTC置位时若TX FIFO是空的，则FTC置位
 #define SPI_IF_FTC_Msk				(0x01 << SPI_IF_FTC_Pos)
-
-
+#define SPI_IF_SSFALL_Pos			10
+#define SPI_IF_SSFALL_Msk			(0x01 << SPI_IF_SSFALL_Pos)
+#define SPI_IF_SSRISE_Pos			11
+#define SPI_IF_SSRISE_Msk			(0x01 << SPI_IF_SSRISE_Pos)
 
 
 typedef struct {
