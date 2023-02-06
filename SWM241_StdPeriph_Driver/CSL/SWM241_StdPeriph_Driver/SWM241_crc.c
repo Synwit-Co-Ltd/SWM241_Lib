@@ -37,6 +37,8 @@ void CRC_Init(CRC_TypeDef * CRCx, CRC_InitStructure * initStruct)
 		break;
 	}
 	
+	CRCx->INIVAL = initStruct->init_crc;
+	
 	CRCx->CR = (1 << CRC_CR_EN_Pos) |
 			   (initStruct->Poly << CRC_CR_POLY_Pos) |
 			   (initStruct->in_width << CRC_CR_IBIT_Pos) |
@@ -44,6 +46,19 @@ void CRC_Init(CRC_TypeDef * CRCx, CRC_InitStructure * initStruct)
 			   (initStruct->in_not << CRC_CR_INOT_Pos) |
 			   (initStruct->out_rev << CRC_CR_OREV_Pos) |
 			   (initStruct->out_not << CRC_CR_ONOT_Pos);
+}
+
+/****************************************************************************************************************************************** 
+* 函数名称:	CRC_SetInitVal()
+* 功能说明:	设置CRC计算初始值
+* 输    入: CRC_TypeDef * CRCx		指定要被设置的CRC接口，有效值包括CRC
+*			uint32_t init_crc		CRC计算初始值
+* 输    出: 无
+* 注意事项: 无
+******************************************************************************************************************************************/
+void CRC_SetInitVal(CRC_TypeDef * CRCx, uint32_t init_crc)
+{
+	CRCx->INIVAL = init_crc;
 	
-	CRCx->INIVAL = initStruct->init_crc;
+	CRCx->CR |= (1 << CRC_CR_EN_Pos);
 }
