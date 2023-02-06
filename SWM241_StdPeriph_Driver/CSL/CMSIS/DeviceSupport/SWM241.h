@@ -84,17 +84,17 @@ typedef struct {
 
 	__IO uint32_t SLEEP;
 	
-		 uint32_t RESERVED[4];
+	uint32_t RESERVED[4];
 	
 	__IO uint32_t RSTSR;					//Reset Status
 	
-		 uint32_t RESERVED2[2];
+	uint32_t RESERVED2[2];
 	
 	__IO uint32_t RTCWKCR;					//RTC Wakeup Control
 	
 	__IO uint32_t RTCWKSR;
 	
-		 uint32_t RESERVED3[2];
+	uint32_t RESERVED3[2];
 	
 	__IO uint32_t SYSIE;
 	
@@ -102,20 +102,24 @@ typedef struct {
 	
 	__IO uint32_t RAMERR;
 	
-		 uint32_t RESERVED4[13];
+	uint32_t RESERVED4[13];
 	
 	__I  uint32_t CHIPID[4];
 	
-	__IO uint32_t BACKUP[4];				//Data Backup Register
-	
-		 uint32_t RESERVED5[24];
+	 uint32_t RESERVED5[16];
+
+	__IO uint32_t PRNGCR;
+	__IO uint32_t PRNGDL;
+	__IO uint32_t PRNGDH;
+
+	uint32_t RESERVED6[9];
 		 
 	__IO uint32_t PAWKEN;				    //PORTA Wakeup Enable
 	__IO uint32_t PBWKEN;
 	__IO uint32_t PCWKEN;
 	__IO uint32_t PDWKEN;
 	
-         uint32_t RESERVED6[8];
+    uint32_t RESERVED7[8];
 
 	__IO uint32_t PAWKSR;				    //PORTA Wakeup Status，写1清零
 	__IO uint32_t PBWKSR;
@@ -129,20 +133,20 @@ typedef struct {
 	__IO uint32_t PRSTR2;
 
     //Analog Control: 0x400AA000
-         uint32_t RESERVED7[(0x400AA000-0x40000728)/4-1];
+    uint32_t RESERVED9[(0x400AA000-0x40000728)/4-1];
 	
 	__IO uint32_t HRCCR;					//High speed RC Control Register
-		 uint32_t RESERVED9[3];
+	uint32_t RESERVED10[3];
     
     __IO uint32_t BODCR;
 	__IO uint32_t BODSR;
 	
-		 uint32_t RESERVED10[2];
+	uint32_t RESERVED11[2];
 	
 	__IO uint32_t XTALCR;
 	__IO uint32_t XTALSR;
 	
-		 uint32_t RESERVED11[10];
+	uint32_t RESERVED12[10];
 	
     __IO uint32_t LRCCR;					//Low speed RC Control Register
 } SYS_TypeDef;
@@ -1300,6 +1304,10 @@ typedef struct {
 #define SPI_IE_WTC_Msk				(0x01 << SPI_IE_WTC_Pos)
 #define SPI_IE_FTC_Pos				9		//Frame Transmit Complete
 #define SPI_IE_FTC_Msk				(0x01 << SPI_IE_FTC_Pos)
+#define SPI_IE_SSFALL_Pos			10		//Slave Select Fall Edge
+#define SPI_IE_SSFALL_Msk			(0x01 << SPI_IE_SSFALL_Pos)
+#define SPI_IE_SSRISE_Pos			11		//Slave Select Rise Edge
+#define SPI_IE_SSRISE_Msk			(0x01 << SPI_IE_SSRISE_Pos)
 
 #define SPI_IF_RFOV_Pos				0		//写1清零
 #define SPI_IF_RFOV_Msk				(0x01 << SPI_IF_RFOV_Pos)
@@ -1319,8 +1327,10 @@ typedef struct {
 #define SPI_IF_WTC_Msk				(0x01 << SPI_IF_WTC_Pos)
 #define SPI_IF_FTC_Pos				9		//Frame Transmit Complete，WTC置位时若TX FIFO是空的，则FTC置位
 #define SPI_IF_FTC_Msk				(0x01 << SPI_IF_FTC_Pos)
-
-
+#define SPI_IF_SSFALL_Pos			10
+#define SPI_IF_SSFALL_Msk			(0x01 << SPI_IF_SSFALL_Pos)
+#define SPI_IF_SSRISE_Pos			11
+#define SPI_IF_SSRISE_Msk			(0x01 << SPI_IF_SSRISE_Pos)
 
 
 typedef struct {
