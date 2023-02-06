@@ -278,8 +278,12 @@ typedef struct {
 #define SYS_PRSTR1_ANAC_Msk			(0x01 << SYS_PRSTR1_ANAC_Pos)
 #define SYS_PRSTR1_ADC0_Pos			26
 #define SYS_PRSTR1_ADC0_Msk			(0x01 << SYS_PRSTR1_ADC0_Pos)
-#define SYS_PRSTR1_LED_Pos			31
-#define SYS_PRSTR1_LED_Msk			(0x01u<< SYS_PRSTR1_LED_Pos)
+#define SYS_PRSTR1_CAN_Pos			28
+#define SYS_PRSTR1_CAN_Msk			(0x01u<< SYS_PRSTR1_CAN_Pos)
+#define SYS_PRSTR1_SLCD_Pos			29
+#define SYS_PRSTR1_SLCD_Msk			(0x01u<< SYS_PRSTR1_SLCD_Pos)
+#define SYS_PRSTR1_SLED_Pos			31
+#define SYS_PRSTR1_SLED_Msk			(0x01u<< SYS_PRSTR1_SLED_Pos)
 
 #define SYS_PRSTR2_RTC_Pos			19
 #define SYS_PRSTR2_RTC_Msk			(0x01 << SYS_PRSTR2_RTC_Pos)
