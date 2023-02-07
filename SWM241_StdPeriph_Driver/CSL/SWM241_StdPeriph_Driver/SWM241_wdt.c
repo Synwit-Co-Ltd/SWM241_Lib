@@ -36,24 +36,15 @@ void WDT_Init(WDT_TypeDef * WDTx, WDT_InitStructure * initStruct)
 	
 	WDT_Stop(WDTx);		//设置前先关闭
 	
-	switch(initStruct->clksrc)
-	{
-	case WDT_CLKSRC_HSI:
-		SYS->HRCCR |= (1 << SYS_HRCCR_ON_Pos); 
-		break;
-	
-	case WDT_CLKSRC_LSI:
-		SYS->LRCCR |= (1 << SYS_LRCCR_ON_Pos);
-		break;
-	}
+	SYS->LRCCR |= (1 << SYS_LRCCR_ON_Pos);
 	
 	SYS->CLKSEL &= ~SYS_CLKSEL_WDT_Msk;
-	SYS->CLKSEL |= (initStruct->clksrc << SYS_CLKSEL_WDT_Pos);
+	SYS->CLKSEL |= (2 << SYS_CLKSEL_WDT_Pos);
 	
 	WDTx->CR = (initStruct->rst_en << WDT_CR_RSTEN_Pos) |
 			   (initStruct->int_en << WDT_CR_INTEN_Pos) |
 			   (initStruct->win_en << WDT_CR_WINEN_Pos) |
-			   (initStruct->clkdiv << WDT_CR_CLKDIV_Pos);
+			   (4 << WDT_CR_CLKDIV_Pos);
 	
 	WDTx->INTVAL = initStruct->int_period;
 	
