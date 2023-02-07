@@ -20,6 +20,7 @@ int main(void)
 	PWM_initStruct.clkdiv = 8;					//F_PWM = 48M/8 = 6M
 	PWM_initStruct.cycle = 10000;				//6M/10000 = 600Hz£¬PWMnXN = 1Ê±ÆµÂÊ½µµÍµ½300Hz
 	PWM_initStruct.hduty =  2500;				//2500/10000 = 25%
+    PWM_initStruct.deadzone = 0;
 	PWM_initStruct.initLevel = 1;
 	PWM_initStruct.HEndIE = 0;
 	PWM_initStruct.NCycleIE = 0;

@@ -2,8 +2,10 @@
 #define __SWM241_TIMR_H__
 
 
-#define TIMR_MODE_TIMER		0
-#define TIMR_MODE_COUNTER	2
+#define TIMR_MODE_TIMER		((0 << 2) | 0)
+#define TIMR_MODE_IC		((1 << 2) | 0)	//输入捕获
+#define TIMR_MODE_OC		((2 << 2) | 0)	//输出比较
+#define TIMR_MODE_COUNTER	((0 << 2) | 2)	//计数上升沿
 
 #define TIMR_ICEDGE_BOTH	0
 #define TIMR_ICEDGE_RISE	1
