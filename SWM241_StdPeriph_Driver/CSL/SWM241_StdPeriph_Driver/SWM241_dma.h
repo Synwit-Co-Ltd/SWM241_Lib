@@ -11,17 +11,17 @@ typedef struct {
 	
 	uint32_t SrcAddr;
 	
-	uint8_t  SrcAddrInc;	//0 地址固定    1 地址递增
-	
 	uint32_t DstAddr;
+	
+	uint8_t  SrcAddrInc;	//0 地址固定    1 地址递增
 	
 	uint8_t  DstAddrInc;
 	
-	uint8_t  Trigger;		//软件启动：DMA_TRG_SW    硬件触发：DMA_CH0_UART0TX、DMA_CH0_SPI0TX、... ...
+	uint8_t  Handshake;		//传输握手信号：DMA_HS_NO、DMA_CH0_UART0TX、DMA_CH0_SPI0TX、... .....
 	
 	uint8_t  Priority;		//DMA_PRI_LOW、DMA_PRI_HIGH
 	
-	uint8_t  DoneIE;		//传输完成中断使能
+	uint32_t  INTEn;		//中断使能，有效值有 DMA_IT_DONE、DMA_IT_DSTSG_HALF、DMA_IT_DSTSG_DONE、DMA_IT_SRCSG_HALF、DMA_IT_SRCSG_DONE 及其“或”
 } DMA_InitStructure;
 
 
@@ -38,44 +38,60 @@ typedef struct {
 #define DMA_PRI_LOW			0
 #define DMA_PRI_HIGH		1
 
+#define DMA_HS_NO			(0 << 4)	// 无握手（Handshake）信号，启动传输后全部传完
+#define DMA_HS_SRC			(1 << 4)	// 源  侧握手信号，启动传输后源  侧生成一个数据，DMA搬运一个Unit
+#define DMA_HS_DST			(2 << 4)	// 目标侧握手信号，启动传输后目标侧索取一个数据，DMA搬运一个Unit
+#define DMA_HS_EXT			(4 << 4)	// 外部  握手信号，启动传输后外部握手来一个脉冲，DMA搬运一个Unit
+#define DMA_HS_MSK			(7 << 4)
 
-#define DMA_TRG_M0			(0 << 4)
-#define DMA_TRG_M1			(1 << 4)
-#define DMA_TRG_SW			(2 << 4)
-#define DMA_TRG_MSK			(3 << 4)
-
-#define DMA_DIR_TX			(0 << 7)	// M0 --> M1
-#define DMA_DIR_RX			(1 << 7)	// M1 --> M0
+#define DMA_DIR_TX			(0 << 7)	// SRC --> DST
+#define DMA_DIR_RX			(1 << 7)	// DST --> SRC
 #define DMA_DIR_MSK			(1 << 7)
 
-// M0 上外设
-#define DMA_CH0_UART0TX		(0 | DMA_TRG_M0 | DMA_DIR_RX)
-#define DMA_CH0_SPI0TX		(1 | DMA_TRG_M0 | DMA_DIR_RX)
-#define DMA_CH0_UART3TX		(2 | DMA_TRG_M0 | DMA_DIR_RX)
-#define DMA_CH1_UART1TX		(0 | DMA_TRG_M0 | DMA_DIR_RX)
-#define DMA_CH1_SPI1TX		(1 | DMA_TRG_M0 | DMA_DIR_RX)
-#define DMA_CH1_UART2TX		(2 | DMA_TRG_M0 | DMA_DIR_RX)
+// 源侧外设
+#define DMA_CH0_UART1RX		(0 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH0_SPI1RX		(1 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH0_ADC0		(2 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH0_UART2RX		(3 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH1_UART0RX		(0 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH1_SPI0RX		(1 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH1_ADC0		(2 | DMA_HS_SRC | DMA_DIR_RX)
+#define DMA_CH1_UART3RX		(3 | DMA_HS_SRC | DMA_DIR_RX)
 
-// M1 上外设
-#define DMA_CH0_UART1RX		(0 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH0_SPI1RX		(1 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH0_ADC0		(2 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH0_UART2RX		(3 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH1_UART0RX		(0 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH1_SPI0RX		(1 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH1_ADC0		(2 | DMA_TRG_M1 | DMA_DIR_RX)
-#define DMA_CH1_UART3RX		(3 | DMA_TRG_M1 | DMA_DIR_RX)
+// 目标侧外设
+#define DMA_CH0_UART0TX		(0 | DMA_HS_DST | DMA_DIR_RX)
+#define DMA_CH0_SPI0TX		(1 | DMA_HS_DST | DMA_DIR_RX)
+#define DMA_CH0_UART3TX		(2 | DMA_HS_DST | DMA_DIR_RX)
+#define DMA_CH1_UART1TX		(0 | DMA_HS_DST | DMA_DIR_RX)
+#define DMA_CH1_SPI1TX		(1 | DMA_HS_DST | DMA_DIR_RX)
+#define DMA_CH1_UART2TX		(2 | DMA_HS_DST | DMA_DIR_RX)
 
+// 外部握手信号
+#define DMA_EXHS_TIMR0		(0 | DMA_HS_EXT | DMA_DIR_RX)
+#define DMA_EXHS_TIMR1		(1 | DMA_HS_EXT | DMA_DIR_RX)
+#define DMA_EXHS_TIMR2		(2 | DMA_HS_EXT | DMA_DIR_RX)
+#define DMA_EXHS_TIMR3		(3 | DMA_HS_EXT | DMA_DIR_RX)
+#define DMA_EXHS_TIMR4		(4 | DMA_HS_EXT | DMA_DIR_RX)
+
+/* Interrupt Type */
+#define DMA_IT_DONE			(1 <<  0)	//Transfer Done
+#define DMA_IT_DSTSG_HALF	(1 <<  8)	//Destination Scatter-Gather Transfer Half
+#define DMA_IT_DSTSG_DONE	(1 <<  9)	//Destination Scatter-Gather Transfer Done
+#define DMA_IT_SRCSG_HALF	(1 << 16)	//Source      Scatter-Gather Transfer Half
+#define DMA_IT_SRCSG_DONE	(1 << 17)	//Source      Scatter-Gather Transfer Done
 
 void DMA_CH_Init(uint32_t chn, DMA_InitStructure * initStruct);	//DMA通道配置
 void DMA_CH_Open(uint32_t chn);
 void DMA_CH_Close(uint32_t chn);
 
-void DMA_CH_INTEn(uint32_t chn);				//DMA中断使能，数据搬运完成后触发中断
-void DMA_CH_INTDis(uint32_t chn);				//DMA中断禁止，数据搬运完成后不触发中断
-void DMA_CH_INTClr(uint32_t chn);				//DMA中断标志清除
-uint32_t DMA_CH_INTStat(uint32_t chn);			//DMA中断状态查询，1 数据搬运完成    0 数据搬运未完成
+void DMA_CH_SetCount(uint32_t chn, uint32_t count);
+void DMA_CH_SetSrcAddress(uint32_t chn, uint32_t address);
+void DMA_CH_SetDstAddress(uint32_t chn, uint32_t address);
+uint32_t DMA_CH_GetRemaining(uint32_t chn);
 
-
+void DMA_CH_INTEn(uint32_t chn, uint32_t it);					//DMA中断使能
+void DMA_CH_INTDis(uint32_t chn, uint32_t it);					//DMA中断禁止
+void DMA_CH_INTClr(uint32_t chn, uint32_t it);					//DMA中断标志清除
+uint32_t DMA_CH_INTStat(uint32_t chn, uint32_t it);				//DMA中断状态查询
 
 #endif //__SWM241_DMA_H__
