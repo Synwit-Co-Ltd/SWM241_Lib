@@ -1001,32 +1001,22 @@ typedef struct {
 typedef struct {
 	__IO uint32_t HALLIE;					//[0] HALL中断使能
 	
-	__IO uint32_t HALLIM;					//[0] HALL中断屏蔽
+	uint32_t RESERVED;
 	
 	__IO uint32_t HALLIF;
 	
-	__IO uint32_t HALLMD;
+	__IO uint32_t HALLEN;					//[0] HALL功能开关
 	
-	__IO uint32_t HALLV0;					//HALL信号0触发时，计数器计数值
+	__IO uint32_t HALLDR;					//HALL输入跳变沿将计数器（加载值 - 当前值）存入此寄存器
 	
-	__IO uint32_t HALLV1;
-	
-	__IO uint32_t HALLV2;
+	uint32_t RESERVED2[2];
 	
 	__IO uint32_t HALLSR;
 	
-		 uint32_t RESERVED[8];
+	uint32_t RESERVED3[8];
 	
 	__IO uint32_t EN;
 } TIMRG_TypeDef;
-
-
-#define TIMRG_HALLIE_IN0_Pos		0		//HALL输入信号0触发中断使能
-#define TIMRG_HALLIE_IN0_Msk		(0x01 << TIMRG_HALLIE_IN0_Pos)
-#define TIMRG_HALLIE_IN1_Pos		1
-#define TIMRG_HALLIE_IN1_Msk		(0x01 << TIMRG_HALLIE_IN1_Pos)
-#define TIMRG_HALLIE_IN2_Pos		2
-#define TIMRG_HALLIE_IN2_Msk		(0x01 << TIMRG_HALLIE_IN2_Pos)
 
 #define TIMRG_HALLIF_IN0_Pos		0		//HALL输入信号0触发中断标志，写1清零
 #define TIMRG_HALLIF_IN0_Msk		(0x01 << TIMRG_HALLIF_IN0_Pos)
@@ -1034,13 +1024,6 @@ typedef struct {
 #define TIMRG_HALLIF_IN1_Msk		(0x01 << TIMRG_HALLIF_IN1_Pos)
 #define TIMRG_HALLIF_IN2_Pos		2
 #define TIMRG_HALLIF_IN2_Msk		(0x01 << TIMRG_HALLIF_IN2_Pos)
-
-#define TIMRG_HALLMD_IN0_Pos		0		//HALL输入信号0模式，0 不触发   1 上升沿触发   2 下降沿触发   3 双边沿触发
-#define TIMRG_HALLMD_IN0_Msk		(0x03 << TIMRG_HALLMD_IN0_Pos)
-#define TIMRG_HALLMD_IN1_Pos		2
-#define TIMRG_HALLMD_IN1_Msk		(0x03 << TIMRG_HALLMD_IN1_Pos)
-#define TIMRG_HALLMD_IN2_Pos		4
-#define TIMRG_HALLMD_IN2_Msk		(0x03 << TIMRG_HALLMD_IN2_Pos)
 
 #define TIMRG_HALLSR_IN0_Pos		0		//HALL输入信号0当前电平
 #define TIMRG_HALLSR_IN0_Msk		(0x01 << TIMRG_HALLSR_IN0_Pos)
@@ -2264,7 +2247,7 @@ typedef struct {
 		__I  uint32_t SRCSR;
 		
 			 uint32_t RESERVED[3];
-	} CH[4];
+	} CH[2];
 } DMA_TypeDef;
 
 
@@ -2283,65 +2266,6 @@ typedef struct {
 #define DMA_IF_CH1_Pos			    1		
 #define DMA_IF_CH1_Msk			    (0x01 << DMA_IF_CH1_Pos)
 
-#define DMA_DSTSGIE_CH0HF_Pos		0		//传输一半中断使能
-#define DMA_DSTSGIE_CH0HF_Msk		(0x01 << DMA_DSTSGIE_CH0HF_Pos)
-#define DMA_DSTSGIE_CH0_Pos			1		//传输完成中断使能
-#define DMA_DSTSGIE_CH0_Msk			(0x01 << DMA_DSTSGIE_CH0_Pos)
-#define DMA_DSTSGIE_CH1HF_Pos		2
-#define DMA_DSTSGIE_CH1HF_Msk		(0x01 << DMA_DSTSGIE_CH1HF_Pos)
-#define DMA_DSTSGIE_CH1_Pos			3
-#define DMA_DSTSGIE_CH1_Msk			(0x01 << DMA_DSTSGIE_CH1_Pos)
-
-#define DMA_DSTSGIM_CH0HF_Pos		0
-#define DMA_DSTSGIM_CH0HF_Msk		(0x01 << DMA_DSTSGIM_CH0HF_Pos)
-#define DMA_DSTSGIM_CH0_Pos			1
-#define DMA_DSTSGIM_CH0_Msk			(0x01 << DMA_DSTSGIM_CH0_Pos)
-#define DMA_DSTSGIM_CH1HF_Pos		2
-#define DMA_DSTSGIM_CH1HF_Msk		(0x01 << DMA_DSTSGIM_CH1HF_Pos)
-#define DMA_DSTSGIM_CH1_Pos			3
-#define DMA_DSTSGIM_CH1_Msk			(0x01 << DMA_DSTSGIM_CH1_Pos)
-
-#define DMA_DSTSGIF_CH0HF_Pos		0
-#define DMA_DSTSGIF_CH0HF_Msk		(0x01 << DMA_DSTSGIF_CH0HF_Pos)
-#define DMA_DSTSGIF_CH0_Pos			1
-#define DMA_DSTSGIF_CH0_Msk			(0x01 << DMA_DSTSGIF_CH0_Pos)
-#define DMA_DSTSGIF_CH1HF_Pos		2
-#define DMA_DSTSGIF_CH1HF_Msk		(0x01 << DMA_DSTSGIF_CH1HF_Pos)
-#define DMA_DSTSGIF_CH1_Pos			3
-#define DMA_DSTSGIF_CH1_Msk			(0x01 << DMA_DSTSGIF_CH1_Pos)
-
-#define DMA_SRCSGIE_CH0HF_Pos		0		//传输一半中断使能
-#define DMA_SRCSGIE_CH0HF_Msk		(0x01 << DMA_SRCSGIE_CH0HF_Pos)
-#define DMA_SRCSGIE_CH0_Pos			1		//传输完成中断使能
-#define DMA_SRCSGIE_CH0_Msk			(0x01 << DMA_SRCSGIE_CH0_Pos)
-#define DMA_SRCSGIE_CH1HF_Pos		2
-#define DMA_SRCSGIE_CH1HF_Msk		(0x01 << DMA_SRCSGIE_CH1HF_Pos)
-#define DMA_SRCSGIE_CH1_Pos			3
-#define DMA_SRCSGIE_CH1_Msk			(0x01 << DMA_SRCSGIE_CH1_Pos)
-
-#define DMA_SRCSGIM_CH0HF_Pos		0
-#define DMA_SRCSGIM_CH0HF_Msk		(0x01 << DMA_SRCSGIM_CH0HF_Pos)
-#define DMA_SRCSGIM_CH0_Pos			1
-#define DMA_SRCSGIM_CH0_Msk			(0x01 << DMA_SRCSGIM_CH0_Pos)
-#define DMA_SRCSGIM_CH1HF_Pos		2
-#define DMA_SRCSGIM_CH1HF_Msk		(0x01 << DMA_SRCSGIM_CH1HF_Pos)
-#define DMA_SRCSGIM_CH1_Pos			3
-#define DMA_SRCSGIM_CH1_Msk			(0x01 << DMA_SRCSGIM_CH1_Pos)
-
-#define DMA_SRCSGIF_CH0HF_Pos		0
-#define DMA_SRCSGIF_CH0HF_Msk		(0x01 << DMA_SRCSGIF_CH0HF_Pos)
-#define DMA_SRCSGIF_CH0_Pos			1
-#define DMA_SRCSGIF_CH0_Msk			(0x01 << DMA_SRCSGIF_CH0_Pos)
-#define DMA_SRCSGIF_CH1HF_Pos		2
-#define DMA_SRCSGIF_CH1HF_Msk		(0x01 << DMA_SRCSGIF_CH1HF_Pos)
-#define DMA_SRCSGIF_CH1_Pos			3
-#define DMA_SRCSGIF_CH1_Msk			(0x01 << DMA_SRCSGIF_CH1_Pos)
-
-#define DMA_PRI_CH0_Pos				0
-#define DMA_PRI_CH0_Msk				(0x01 << DMA_PRI_CH0_Pos)
-#define DMA_PRI_CH1_Pos				1
-#define DMA_PRI_CH1_Msk				(0x01 << DMA_PRI_CH1_Pos)
-
 #define DMA_CR_LEN_Pos				0       //此通道传输单位个数
 #define DMA_CR_LEN_Msk				(0xFFF<< DMA_CR_LEN_Pos)
 #define DMA_CR_RXEN_Pos				24		//软件启动传输，传输方向为SRC-->DST
@@ -2350,6 +2274,8 @@ typedef struct {
 #define DMA_CR_TXEN_Msk				(0x01 << DMA_CR_TXEN_Pos)
 #define DMA_CR_AUTORE_Pos			26      //Auto Restart, 通道在传输完成后，是否自动重新启动
 #define DMA_CR_AUTORE_Msk			(0x01 << DMA_CR_AUTORE_Pos)
+#define DMA_CR_STEPOP_Pos			27		//Step Operation, 步进传输，触发1次传送1个单位数据
+#define DMA_CR_STEPOP_Msk			(0x01 << DMA_CR_STEPOP_Pos)
 
 #define DMA_AM_DSTAM_Pos			0       //Address Mode	0 地址固定    1 地址递增    2 scatter gather模式
 #define DMA_AM_DSTAM_Msk			(0x03 << DMA_AM_DSTAM_Pos)
@@ -2364,18 +2290,18 @@ typedef struct {
 #define DMA_AM_SRCBURST_Pos			12
 #define DMA_AM_SRCBURST_Msk			(0x01 << DMA_AM_SRCBURST_Pos)
 
-#define DMA_MUX_M0TRGSRC_Pos		0		//M0上硬件触发源
-#define DMA_MUX_M0TRGSRC_Msk		(0x03 << DMA_MUX_M0TRGSRC_Pos)
-#define DMA_MUX_M0TRGEN_Pos			2		//M0上硬件触发源使能
-#define DMA_MUX_M0TRGEN_Msk			(0x01 << DMA_MUX_M0TRGEN_Pos)
-#define DMA_MUX_M1TRGSRC_Pos		8		//M1上硬件触发源
-#define DMA_MUX_M1TRGSRC_Msk		(0x03 << DMA_MUX_M1TRGSRC_Pos)
-#define DMA_MUX_M1TRGEN_Pos			10		//M1上硬件触发源使能
-#define DMA_MUX_M1TRGEN_Msk			(0x01 << DMA_MUX_M1TRGEN_Pos)
-#define DMA_MUX_TRGSRC_Pos			16		//0 TIMER0溢出信号触发DMA启动传输   1 TIMER1   2 TIMER2   3 TIMER3
-#define DMA_MUX_TRGSRC_Msk			(0x03 << DMA_MUX_TRGSRC_Pos)
-#define DMA_MUX_TRGEN_Pos			19		//0 软件置位CR.RXEN启动传输   1 TRGSRC选中的触发源启动传输
-#define DMA_MUX_TRGEN_Msk			(0x01 << DMA_MUX_TRGEN_Pos)
+#define DMA_MUX_DSTHSSIG_Pos		0		//目标侧握手信号（handshake signal）
+#define DMA_MUX_DSTHSSIG_Msk		(0x03 << DMA_MUX_DSTHSSIG_Pos)
+#define DMA_MUX_DSTHSEN_Pos			2		//目标侧握手使能（handshake enable）
+#define DMA_MUX_DSTHSEN_Msk			(0x01 << DMA_MUX_DSTHSEN_Pos)
+#define DMA_MUX_SRCHSSIG_Pos		8		//源侧握手信号
+#define DMA_MUX_SRCHSSIG_Msk		(0x03 << DMA_MUX_SRCHSSIG_Pos)
+#define DMA_MUX_SRCHSEN_Pos			10		//源侧握手使能
+#define DMA_MUX_SRCHSEN_Msk			(0x01 << DMA_MUX_SRCHSEN_Pos)
+#define DMA_MUX_EXTHSSIG_Pos		16		//外部握手信号，0 TIMR0   1 TIMR1   2 TIMR2   3 TIMR3   4 TIMR4
+#define DMA_MUX_EXTHSSIG_Msk		(0x07 << DMA_MUX_EXTHSSIG_Pos)
+#define DMA_MUX_EXTHSEN_Pos			19		//外部握手使能，0 软件置位CR.RXEN/TXEN启动传输   1 EXTHSSRC选中的触发源启动传输
+#define DMA_MUX_EXTHSEN_Msk			(0x01 << DMA_MUX_EXTHSEN_Pos)
 
 #define DMA_DSTSR_LEN_Pos			0		//剩余传输量
 #define DMA_DSTSR_LEN_Msk			(0xFFF<< DMA_DSTSR_LEN_Pos)

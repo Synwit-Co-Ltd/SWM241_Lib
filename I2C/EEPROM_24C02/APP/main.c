@@ -27,14 +27,14 @@ int main(void)
 	while(1==1)
 	{
 		/*************** EEPROM Write ***************/		
-		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0);
+		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for address\r\n");
 			goto nextloop;
 		}
 		
-		ack = I2C_Write(I2C0, MEM_ADDR);
+		ack = I2C_Write(I2C0, MEM_ADDR, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for memory address\r\n");
@@ -43,7 +43,7 @@ int main(void)
 		
 		for(i = 0; i < 4; i++)
 		{
-			ack = I2C_Write(I2C0, txbuff[i]);
+			ack = I2C_Write(I2C0, txbuff[i], 1);
 			if(ack == 0)
 			{
 				printf("Slave send NACK for data\r\n");
@@ -51,7 +51,7 @@ int main(void)
 			}
 		}
 		
-		I2C_Stop(I2C0);
+		I2C_Stop(I2C0, 1);
 		
 		printf("Master Write %X %X %X %X @ %X\r\n", txbuff[0], txbuff[1], txbuff[2], txbuff[3], MEM_ADDR);
 
@@ -60,21 +60,21 @@ int main(void)
 		
 		
 		/*************** EEPROM Read ***************/
-		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0);
+		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for address\r\n");
 			goto nextloop;
 		}
 		
-		ack = I2C_Write(I2C0, MEM_ADDR);
+		ack = I2C_Write(I2C0, MEM_ADDR, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for memory address\r\n");
 			goto nextloop;
 		}
 		
-		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 1);
+		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 1, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for address\r\n");
@@ -83,9 +83,9 @@ int main(void)
 		
 		for(i = 0; i < 3; i++)
 		{
-			rxbuff[i] = I2C_Read(I2C0, 1);
+			rxbuff[i] = I2C_Read(I2C0, 1, 1);
 		}
-		rxbuff[i] = I2C_Read(I2C0, 0);
+		rxbuff[i] = I2C_Read(I2C0, 0, 1);
 		
 		printf("Master Read %X %X %X %X @ %X\r\n", rxbuff[0], rxbuff[1], rxbuff[2], rxbuff[3], MEM_ADDR);
 		
@@ -95,7 +95,7 @@ int main(void)
 			printf("Fail\r\n");
 
 nextloop:
-		I2C_Stop(I2C0);
+		I2C_Stop(I2C0, 1);
 		for(i = 0; i < 10000000; i++) ;
 	}
 }

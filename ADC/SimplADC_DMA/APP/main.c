@@ -47,9 +47,9 @@ int main(void)
 	DMA_initStruct.SrcAddrInc = 0;
 	DMA_initStruct.DstAddr = (uint32_t)ADC_Result;
 	DMA_initStruct.DstAddrInc = 1;
-	DMA_initStruct.Trigger = DMA_CH0_ADC0;
+	DMA_initStruct.Handshake = DMA_CH0_ADC0;
 	DMA_initStruct.Priority = DMA_PRI_LOW;
-	DMA_initStruct.DoneIE = 1;
+	DMA_initStruct.INTEn = DMA_IT_DONE;
 	DMA_CH_Init(DMA_CH0, &DMA_initStruct);
 	
 	DMA_CH_Open(DMA_CH0);
@@ -66,11 +66,11 @@ void DMA_Handler(void)
 {
 	uint32_t i, res, chn;
 	
-	if(DMA_CH_INTStat(DMA_CH0))
+	if(DMA_CH_INTStat(DMA_CH0, DMA_IT_DONE))
 	{
 		ADC_Stop(ADC);
 		
-		DMA_CH_INTClr(DMA_CH0);		//清除中断标志
+		DMA_CH_INTClr(DMA_CH0, DMA_IT_DONE);		//清除中断标志
 		
 		for(i = 0; i < ADC_N; i++)
 		{

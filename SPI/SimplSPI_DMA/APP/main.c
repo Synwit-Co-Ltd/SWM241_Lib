@@ -18,6 +18,7 @@ int main(void)
 	
 	SerialInit();	
 	
+    PORT_Init(PORTA, PIN0, PORTA_PIN0_SPI0_SSEL, 0);
 	PORT_Init(PORTB, PIN2, PORTB_PIN2_SPI0_SCLK, 0);
 	PORT_Init(PORTB, PIN3, PORTB_PIN3_SPI0_MISO, 1);	//将 MISO 与 MOSI 连接起来
 	PORT_Init(PORTB, PIN4, PORTB_PIN4_SPI0_MOSI, 0);
@@ -28,12 +29,14 @@ int main(void)
 	SPI_initStruct.IdleLevel = SPI_HIGH_LEVEL;
 	SPI_initStruct.WordSize = 8;
 	SPI_initStruct.Master = 1;
-	SPI_initStruct.RXThreshold = 4;
+	SPI_initStruct.RXThreshold = 0;
 	SPI_initStruct.RXThresholdIEn = 0;
-	SPI_initStruct.TXThreshold = 4;
+	SPI_initStruct.TXThreshold = 0;
 	SPI_initStruct.TXThresholdIEn = 0;
+    SPI_initStruct.TXCompleteIEn  = 0;
 	SPI_Init(SPI0, &SPI_initStruct);
-	
+	SPI_Open(SPI0);
+
 	// SPI0 RX DMA
 	SPI0->CTRL |= (1 << SPI_CTRL_DMARXEN_Pos);
 	
@@ -44,13 +47,11 @@ int main(void)
 	DMA_initStruct.SrcAddrInc = 0;
 	DMA_initStruct.DstAddr = (uint32_t)RX_Buffer;
 	DMA_initStruct.DstAddrInc = 1;
-	DMA_initStruct.Trigger = DMA_CH1_SPI0RX;
+	DMA_initStruct.Handshake = DMA_CH1_SPI0RX;
 	DMA_initStruct.Priority = DMA_PRI_LOW;
-	DMA_initStruct.DoneIE = 1;
+	DMA_initStruct.INTEn = DMA_IT_DONE;
 	DMA_CH_Init(DMA_CH1, &DMA_initStruct);
-	
 	DMA_CH_Open(DMA_CH1);
-	
 	
 	// SPI0 TX DMA
 	SPI0->CTRL |= (1 << SPI_CTRL_DMATXEN_Pos);
@@ -62,14 +63,11 @@ int main(void)
 	DMA_initStruct.SrcAddrInc = 1;
 	DMA_initStruct.DstAddr = (uint32_t)&SPI0->DATA;
 	DMA_initStruct.DstAddrInc = 0;
-	DMA_initStruct.Trigger = DMA_CH0_SPI0TX;
+	DMA_initStruct.Handshake = DMA_CH0_SPI0TX;
 	DMA_initStruct.Priority = DMA_PRI_LOW;
-	DMA_initStruct.DoneIE = 1;
+	DMA_initStruct.INTEn = DMA_IT_DONE;
 	DMA_CH_Init(DMA_CH0, &DMA_initStruct);
-	
 	DMA_CH_Open(DMA_CH0);
-	
-	SPI_Open(SPI0);
 	
 	while(1==1)
 	{
@@ -80,17 +78,17 @@ void DMA_Handler(void)
 {	
 	uint32_t i;
 	
-	if(DMA_CH_INTStat(DMA_CH0))
+	if(DMA_CH_INTStat(DMA_CH0, DMA_IT_DONE))
 	{
-		DMA_CH_INTClr(DMA_CH0);
+		DMA_CH_INTClr(DMA_CH0, DMA_IT_DONE);
 		
-		for(i = 0; i < SystemCoreClock/20; i++)  __NOP();		// 延时一会儿
+		for(i = 0; i < SystemCoreClock/4; i++)  __NOP();		// 延时一会儿
 		
 		DMA_CH_Open(DMA_CH0);	// 重新开始，再次搬运
 	}
-	else if(DMA_CH_INTStat(DMA_CH1))
+	else if(DMA_CH_INTStat(DMA_CH1, DMA_IT_DONE))
 	{
-		DMA_CH_INTClr(DMA_CH1);
+		DMA_CH_INTClr(DMA_CH1, DMA_IT_DONE);
 		
 		for(i = 0; i < BUF_SIZE; i++)  printf("%c", RX_Buffer[i]);
 		

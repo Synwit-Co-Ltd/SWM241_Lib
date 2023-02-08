@@ -34,7 +34,7 @@ int main(void)
 		/*************************** Master Write ************************************/
 		slv_rxindx = 0;
 		
-		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0);
+		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 0, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for address\r\n");
@@ -43,7 +43,7 @@ int main(void)
 		
 		for(i = 0; i < 4; i++)
 		{
-			ack = I2C_Write(I2C0, mst_txbuff[i]);
+			ack = I2C_Write(I2C0, mst_txbuff[i], 1);
 			if(ack == 0)
 			{
 				printf("Slave send NACK for data\r\n");
@@ -51,7 +51,7 @@ int main(void)
 			}
 		}
 		
-		I2C_Stop(I2C0);
+		I2C_Stop(I2C0, 1);
 		
 		printf("Master Send %X %X %X %X\r\n", mst_txbuff[0], mst_txbuff[1], mst_txbuff[2], mst_txbuff[3]);
 		
@@ -60,7 +60,7 @@ int main(void)
 		slv_txindx = 0;
 		memcpy(slv_txbuff, &slv_rxbuff[1], 4);
 		
-		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 1);
+		ack = I2C_Start(I2C0, (SLV_ADDR << 1) | 1, 1);
 		if(ack == 0)
 		{
 			printf("Slave send NACK for address\r\n");
@@ -69,9 +69,9 @@ int main(void)
 		
 		for(i = 0; i < 3; i++)
 		{
-			mst_rxbuff[i] = I2C_Read(I2C0, 1);
+			mst_rxbuff[i] = I2C_Read(I2C0, 1, 1);
 		}
-		mst_rxbuff[i] = I2C_Read(I2C0, 0);
+		mst_rxbuff[i] = I2C_Read(I2C0, 0, 1);
 		
 		printf("Master Read %X %X %X %X\r\n", mst_rxbuff[0], mst_rxbuff[1], mst_rxbuff[2], mst_rxbuff[3]);
 		
@@ -81,7 +81,7 @@ int main(void)
 			printf("Fail\r\n");
 
 nextloop:
-		I2C_Stop(I2C0);
+		I2C_Stop(I2C0, 1);
 		for(i = 0; i < 4000000; i++) ;
 	}
 }
