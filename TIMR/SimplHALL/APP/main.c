@@ -8,84 +8,72 @@ void SerialInit(void);
 void TestSignal(void);
 
 int main(void)
-{	
-	uint32_t i;
-	
+{
 	SystemInit();
 	
 	SerialInit();
 	
 	TestSignal();	//产生测试信号供HALL功能测量
 	
-	PORT_Init(PORTD, PIN6, PORTD_PIN6_HALL_A, 1);	//PD6 -> HALL_A
-	PORT_Init(PORTD, PIN4, PORTD_PIN4_HALL_B, 1);	//PD4 -> HALL_B
-	PORT_Init(PORTD, PIN5, PORTD_PIN5_HALL_C, 1);	//PD5 -> HALL_C
+	PORT_Init(PORTD, PIN6, PORTD_PIN6_HALL_IN0, 1);	//PD6 -> HALL_IN0
+	PORT_Init(PORTD, PIN4, PORTD_PIN4_HALL_IN1, 1);	//PD4 -> HALL_IN1
+	PORT_Init(PORTD, PIN5, PORTD_PIN5_HALL_IN2, 1);	//PD5 -> HALL_IN2
 	
-	TIMR_Init(TIMR0, TIMR_MODE_TIMER, 1, 0xFFFFFF, 1);
+	TIMR_Init(TIMR0, TIMR_MODE_TIMER, CyclesPerUs, 2000000, 1);		//2秒钟未检测到HALL输入变化，触发超时中断
 	
-	TIMRG->HALLMD = (3 << TIMRG_HALLMD_IN0_Pos) |
-					(3 << TIMRG_HALLMD_IN1_Pos) |
-					(3 << TIMRG_HALLMD_IN2_Pos);	//三个通道都是双边沿触发
+	TIMRG->HALLEN = 1;
+	TIMRG->HALLIF = 7;
 	TIMRG->HALLIE = 1;
-	TIMRG->HALLIM = 0;
-	NVIC_EnableIRQ(SPI1_HALL_GPIOC9_IRQn);
+	NVIC_EnableIRQ(SPI1_HALL_GPIOA9_IRQn);
 	
 	TIMR_Start(TIMR0);
 	
 	while(1==1)
 	{
-		printf("Period = %d, HWidth = %d, Duty = %%%d\r\n", Period, Period-LWidth, (Period-LWidth)*100/Period);
-		
-		for(i = 0; i < 5000000; i++);
 	}
+}
+
+void SPI1_HALL_GPIOA9_Handler(void)
+{
+    printf("%08X,", TIMRG->HALLIF);
+	TIMRG->HALLIF = 7;
+	
+	printf("%dus\r\n", TIMRG->HALLDR);
 }
 
 void TIMR0_Handler(void)
 {
-	TIMR0->IF = (1 << TIMR_IF_TO_Pos);			//若是溢出中断，清除中断标志
+	TIMR0->IF = (1 << TIMR_IF_TO_Pos);
 	
-	if(TIMRG->HALLSR & TIMRG_HALLSR_IN0_Msk)		//上升沿
-	{
-		LWidth = 0xFFFFFF - TIMRG->HALLV0;
-	}
-	else											//下降沿
-	{
-		TIMR_Stop(TIMR0);
-		TIMR_Start(TIMR0);							//重新从0xFFFFFF递减						
-		
-		Period = 0xFFFFFF - TIMRG->HALLV0;
-	}
-	
-	TIMRG->HALLIF = (1 << TIMRG_HALLIF_IN0_Pos);	//清除中断标志
+	printf("HALL Time-out\r\n");
 }
 
 void TestSignal(void)
 {
-	PWM_InitStructure PWM_initStruct;
+	GPIO_Init(GPIOB, PIN4, 1, 0, 0, 0);
+	GPIO_Init(GPIOB, PIN5, 1, 0, 0, 0);
+	GPIO_Init(GPIOB, PIN6, 1, 0, 0, 0);
 	
-	PWM_initStruct.PWMnXN = 1;					//同时输出PWM0A和PWM0AN
-	PWM_initStruct.clkdiv = 8;					//F_PWM = 24M/8 = 3M
-	PWM_initStruct.cycle = 10000;				//3M/10000 = 300Hz，PWMnXN = 1时频率降低到150Hz
-	PWM_initStruct.hduty =  2500;				//2500/10000 = 25%
-	PWM_initStruct.initLevel = 1;
-	PWM_initStruct.HEndIE = 0;
-	PWM_initStruct.NCycleIE = 0;
-	PWM_initStruct.HCycleIE = 0;	
-	PWM_Init(PWM0B, &PWM_initStruct);
-	PWM_Init(PWM1A, &PWM_initStruct);
-	
-	PORT_Init(PORTD, PIN1,  PORTD_PIN1_PWM0A,  0);
-	PORT_Init(PORTD, PIN0,  PORTD_PIN0_PWM0AN, 0);
-	PORT_Init(PORTC, PIN15, PORTC_PIN15_PWM0B, 0);
-	PORT_Init(PORTA, PIN5,  PORTA_PIN5_PWM0BN, 0);
-	PORT_Init(PORTB, PIN14, PORTB_PIN14_PWM1A, 0);
-	PORT_Init(PORTA, PIN4,  PORTA_PIN4_PWM1AN, 0);
-	PORT_Init(PORTA, PIN9,  PORTA_PIN9_PWM1B,  0);
-	PORT_Init(PORTA, PIN3,  PORTA_PIN3_PWM1BN, 0);
-	
-	PWMG->CHEN |= (1 << PWMG_CHEN_PWM0A_Pos) | (1 << PWMG_CHEN_PWM0B_Pos) | (1 << PWMG_CHEN_PWM1A_Pos) | (1 << PWMG_CHEN_PWM1B_Pos);	//多路同时启动
+	TIMR_Init(TIMR1, TIMR_MODE_TIMER, CyclesPerUs, 100000, 1);
+	TIMR_Start(TIMR1);
 }
 
+void TIMR1_Handler(void)
+{
+	static uint32_t setp = 0;
+	
+	TIMR1->IF = (1 << TIMR_IF_TO_Pos);
+	
+	switch(setp++)
+	{
+	case 0: GPIO_SetBit(GPIOB, PIN4); break;
+	case 1: GPIO_SetBit(GPIOB, PIN5); break;
+	case 2: GPIO_SetBit(GPIOB, PIN6); break;
+	case 3: GPIO_ClrBit(GPIOB, PIN4); break;
+	case 4: GPIO_ClrBit(GPIOB, PIN5); break;
+	case 5: GPIO_ClrBit(GPIOB, PIN6); setp = 0; break;
+	}
+}
 
 void SerialInit(void)
 {

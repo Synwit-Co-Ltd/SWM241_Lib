@@ -1001,32 +1001,22 @@ typedef struct {
 typedef struct {
 	__IO uint32_t HALLIE;					//[0] HALL中断使能
 	
-	__IO uint32_t HALLIM;					//[0] HALL中断屏蔽
+	uint32_t RESERVED;
 	
 	__IO uint32_t HALLIF;
 	
-	__IO uint32_t HALLMD;
+	__IO uint32_t HALLEN;					//[0] HALL功能开关
 	
-	__IO uint32_t HALLV0;					//HALL信号0触发时，计数器计数值
+	__IO uint32_t HALLDR;					//HALL输入跳变沿将计数器（加载值 - 当前值）存入此寄存器
 	
-	__IO uint32_t HALLV1;
-	
-	__IO uint32_t HALLV2;
+	uint32_t RESERVED2[2];
 	
 	__IO uint32_t HALLSR;
 	
-		 uint32_t RESERVED[8];
+	uint32_t RESERVED3[8];
 	
 	__IO uint32_t EN;
 } TIMRG_TypeDef;
-
-
-#define TIMRG_HALLIE_IN0_Pos		0		//HALL输入信号0触发中断使能
-#define TIMRG_HALLIE_IN0_Msk		(0x01 << TIMRG_HALLIE_IN0_Pos)
-#define TIMRG_HALLIE_IN1_Pos		1
-#define TIMRG_HALLIE_IN1_Msk		(0x01 << TIMRG_HALLIE_IN1_Pos)
-#define TIMRG_HALLIE_IN2_Pos		2
-#define TIMRG_HALLIE_IN2_Msk		(0x01 << TIMRG_HALLIE_IN2_Pos)
 
 #define TIMRG_HALLIF_IN0_Pos		0		//HALL输入信号0触发中断标志，写1清零
 #define TIMRG_HALLIF_IN0_Msk		(0x01 << TIMRG_HALLIF_IN0_Pos)
@@ -1034,13 +1024,6 @@ typedef struct {
 #define TIMRG_HALLIF_IN1_Msk		(0x01 << TIMRG_HALLIF_IN1_Pos)
 #define TIMRG_HALLIF_IN2_Pos		2
 #define TIMRG_HALLIF_IN2_Msk		(0x01 << TIMRG_HALLIF_IN2_Pos)
-
-#define TIMRG_HALLMD_IN0_Pos		0		//HALL输入信号0模式，0 不触发   1 上升沿触发   2 下降沿触发   3 双边沿触发
-#define TIMRG_HALLMD_IN0_Msk		(0x03 << TIMRG_HALLMD_IN0_Pos)
-#define TIMRG_HALLMD_IN1_Pos		2
-#define TIMRG_HALLMD_IN1_Msk		(0x03 << TIMRG_HALLMD_IN1_Pos)
-#define TIMRG_HALLMD_IN2_Pos		4
-#define TIMRG_HALLMD_IN2_Msk		(0x03 << TIMRG_HALLMD_IN2_Pos)
 
 #define TIMRG_HALLSR_IN0_Pos		0		//HALL输入信号0当前电平
 #define TIMRG_HALLSR_IN0_Msk		(0x01 << TIMRG_HALLSR_IN0_Pos)
