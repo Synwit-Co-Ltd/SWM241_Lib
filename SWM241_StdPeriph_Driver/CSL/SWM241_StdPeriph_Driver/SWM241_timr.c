@@ -39,11 +39,11 @@ void TIMR_Init(TIMR_TypeDef * TIMRx, uint32_t mode, uint32_t clkdiv, uint32_t pe
 	
 	TIMR_Stop(TIMRx);	//一些关键寄存器只能在定时器停止时设置
 	
-	TIMRx->CR &= ~TIMR_CR_CLKSRC_Msk;
-	TIMRx->CR |= mode << TIMR_CR_CLKSRC_Pos;
+	TIMRx->CR &= ~(TIMR_CR_MODE_Msk | TIMR_CR_CLKSRC_Msk);
+	TIMRx->CR |= (mode << TIMR_CR_CLKSRC_Pos);
 	
 	TIMRx->PSC = clkdiv-1;
-	TIMRx->LOAD = period;
+	TIMRx->LOAD = period-1;
 	
 	TIMRx->IF = (1 << TIMR_IF_TO_Pos);		//清除中断标志
 	if(int_en) TIMRx->IE |=  (1 << TIMR_IE_TO_Pos);
