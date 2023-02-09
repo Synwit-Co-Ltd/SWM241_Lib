@@ -93,8 +93,11 @@ void SystemCoreClockUpdate(void)
 * ×¢ÒâÊÂÏî: 
 ******************************************************************************************************************************************/
 void SystemInit(void)
-{		
+{
 	SYS->CLKEN0 |= (1 << SYS_CLKEN0_ANAC_Pos);
+	
+	if((SYS->CHIPID[3] >> 29) == 5)
+		*((__IO uint32_t *)((uint32_t)&SYS->HRCCR + 8)) = SYS->CHIPID[3] & (~(7u << 29));
 	
 	switch(SYS_CLK)
 	{
