@@ -23,13 +23,16 @@ int main(void)
 	CAN_initStruct.CAN_bs2 = CAN_BS2_4tq;
 	CAN_initStruct.CAN_sjw = CAN_SJW_2tq;
 	CAN_initStruct.Baudrate = 50000;
-	CAN_initStruct.RXNotEmptyIEn = 0;
+	CAN_initStruct.RXNotEmptyIEn = 1;
 	CAN_initStruct.ArbitrLostIEn = 0;
 	CAN_initStruct.ErrPassiveIEn = 0;
 	CAN_Init(CAN, &CAN_initStruct);
 	
 	CAN_SetFilter32b(CAN, CAN_FILTER_1, 0x00122122, 0x1FFFFFFE);		//接收ID为0x00122122、0x00122123的扩展包
 	CAN_SetFilter16b(CAN, CAN_FILTER_2, 0x122, 0x7FE, 0x101, 0x7FF);	//接收ID为0x122、123、0x101的标准包
+	
+	TIMR_Init(TIMR0, TIMR_MODE_TIMER, CyclesPerUs, 1000, 1);			//注意：没有 CAN 中断向量，开启定时中断，周期性查询 CAN 中断状态
+	TIMR_Start(TIMR0);
 	
 	CAN_Open(CAN);
 	
@@ -53,11 +56,14 @@ int main(void)
 }
 
 
-void CAN_Handler(void)
+void TIMR0_Handler(void)
+//void CAN_Handler(void)
 {
 	CAN_RXMessage msg;
 	
 	uint32_t int_sr = CAN_INTStat(CAN);
+	
+	TIMR_INTClr(TIMR0);
 	
 	if(int_sr & CAN_IF_RXDA_Msk)
 	{

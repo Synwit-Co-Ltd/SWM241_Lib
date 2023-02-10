@@ -5,7 +5,7 @@ CAN_RXMessage CAN_RXMsg;
 void SerialInit(void);
 
 int main(void)
-{	
+{
 	uint32_t i;
 	uint8_t tx_data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 	CAN_InitStructure CAN_initStruct;

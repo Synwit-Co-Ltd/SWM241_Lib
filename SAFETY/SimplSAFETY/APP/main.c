@@ -28,9 +28,9 @@ int main(void)
 }
 
 void test_PerWP(void)
-{
-	PORTB->PULLU |= (1 << PIN11);
-	if((PORTB->PULLU & (1 << PIN11)) == 0)
+{	
+	PORTB->PULLU |= (1 << PIN9);
+	if((PORTB->PULLU & (1 << PIN9)) == 0)
 	{
 		printf("test_PerWP init fail\r\n");
 		return;
@@ -40,8 +40,8 @@ void test_PerWP(void)
 	// after peripheral write-protect opened
 	SAFETY_PerWP_Open(SAFETY_WP_IOCFGR | SAFETY_WP_IER);
 	
-	PORTB->PULLU &= ~(1 << PIN11);
-	if((PORTB->PULLU & (1 << PIN11)) == 0)
+	PORTB->PULLU &= ~(1 << PIN9);
+	if((PORTB->PULLU & (1 << PIN9)) == 0)
 	{
 		printf("test_PerWP protect fail\r\n");
 		return;
@@ -51,8 +51,8 @@ void test_PerWP(void)
 	// after peripheral write-protect closed
 	SAFETY_PerWP_Close(SAFETY_WP_IOCFGR | SAFETY_WP_IER);
 	
-	PORTB->PULLU &= ~(1 << PIN11);
-	if((PORTB->PULLU & (1 << PIN11)) == 0)
+	PORTB->PULLU &= ~(1 << PIN9);
+	if((PORTB->PULLU & (1 << PIN9)) == 0)
 	{
 		printf("test_PerWP test pass\r\n");
 	}
