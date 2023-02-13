@@ -23,7 +23,7 @@ int main(void)
 // 	PORT_Init(PORTD, PIN14, PORTD_PIN14_ADC_IN10,0);	//PD.14 => ADC.CH10£¬=> UART0.TX
 	PORT_Init(PORTA, PIN3,  PORTA_PIN3_ADC_IN11, 0);	//PA.3  => ADC.CH11
 	
-	ADC_initStruct.clk_src = ADC_CLKSRC_HRC;
+	ADC_initStruct.clk_src = ADC_CLKSRC_HRC_DIV8;
 	ADC_initStruct.clk_div = 12;
 	ADC_initStruct.ref_src = ADC_REFSRC_VREFP;
 	ADC_initStruct.channels = ADC_CH1;

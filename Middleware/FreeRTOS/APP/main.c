@@ -40,7 +40,7 @@ void TaskADC(void *arg)
 	PORT_Init(PORTA, PIN14, PORTA_PIN14_ADC_IN0, 0);//PA.14 => ADC.CH0
 	PORT_Init(PORTA, PIN13, PORTA_PIN13_ADC_IN1, 0);//PA.13 => ADC.CH1
 	
-	ADC_initStruct.clk_src = ADC_CLKSRC_HRC;
+	ADC_initStruct.clk_src = ADC_CLKSRC_HRC_DIV8;
 	ADC_initStruct.clk_div = 12;
 	ADC_initStruct.ref_src = ADC_REFSRC_VREFP;
 	ADC_initStruct.channels = ADC_CH1;
