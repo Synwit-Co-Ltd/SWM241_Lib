@@ -935,9 +935,9 @@ typedef struct {
 
 
 typedef struct {
-	__IO uint32_t LOAD;						//[11:0] 定时器加载值，使能后定时器从此数值开始向下递减计数
+	__IO uint32_t LOAD;						//定时器加载值，使能后定时器从此数值开始向下递减计数
 
-	__I  uint32_t VALUE;					//[19:8] 定时器当前值，LOAD-VALUE 可计算出计时时长
+	__I  uint32_t VALUE;					//定时器当前值，LOAD-VALUE 可计算出计时时长
 
 	__IO uint32_t CR;
 	
@@ -960,6 +960,11 @@ typedef struct {
 	__IO uint32_t PSC;						//[7:0] 定时器预分频
 } TIMR_TypeDef;
 
+
+#define TIMR_LOAD_VALUE_Pos			0
+#define TIMR_LOAD_VALUE_Msk			(0xFFFFFF << TIMR_LOAD_VALUE_Pos)
+#define TIMR_LOAD_RELOAD_Pos		24		//reload VALUE to TIMR's internal Counter immediately. only for BTIMRx, not for TIMRx.
+#define TIMR_LOAD_RELOAD_Msk		(0x01 << TIMR_LOAD_RELOAD_Pos)
 
 #define TIMR_CR_CLKSRC_Pos			0		//时钟源：  0 内部系统时钟	2 外部引脚脉冲计数
 #define TIMR_CR_CLKSRC_Msk			(0x03 << TIMR_CR_CLKSRC_Pos)
