@@ -15,10 +15,10 @@ typedef struct {
 #define SLCD_BIAS_1DIV3		0	// 1/3 Bias
 #define SLCD_BIAS_1DIV2		1	// 1/2 Bias
 
-#define SLCD_FRAMEFREQ_32Hz		0
-#define SLCD_FRAMEFREQ_16Hz		1
-#define SLCD_FRAMEFREQ_8Hz		2
-#define SLCD_FRAMEFREQ_4Hz		3
+#define SLCD_FRAMEFREQ_61Hz		0
+#define SLCD_FRAMEFREQ_122Hz	1
+#define SLCD_FRAMEFREQ_244Hz	2
+#define SLCD_FRAMEFREQ_488Hz	3
 
 #define SLCD_DRIVECURR_8uA		0
 #define SLCD_DRIVECURR_25uA		1
