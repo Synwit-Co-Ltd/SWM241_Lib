@@ -51,8 +51,8 @@ int main(void)
     PORT_Init(PORTB, PIN0, PORTB_PIN0_SLCD_SEG31, 0);
 	
 	SLCD_initStruct.Duty = SLCD_DUTY_1DIV4;
-	SLCD_initStruct.Bias = SLCD_BIAS_1DIV2;
-	SLCD_initStruct.FrameFreq = SLCD_FRAMEFREQ_16Hz;
+	SLCD_initStruct.Bias = SLCD_BIAS_1DIV3;
+	SLCD_initStruct.FrameFreq = SLCD_FRAMEFREQ_61Hz;
 	SLCD_initStruct.DriveCurr = SLCD_DRIVECURR_25uA;
 	SLCD_Init(SLCD, &SLCD_initStruct);
 	

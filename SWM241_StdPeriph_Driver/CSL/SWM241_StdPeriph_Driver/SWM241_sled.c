@@ -39,8 +39,8 @@ void SLED_Init(SLED_TypeDef * SLEDx, SLED_InitStructure * initStruct)
 	
 	SLEDx->CLKDIV = initStruct->clkdiv;
 	
-	SLEDx->TIM = (initStruct->period << SLED_TIM_PERIOD_Pos) |
-				 (initStruct->high   << SLED_TIM_HIGH_Pos);
+	SLEDx->TIM = (((initStruct->period > 2) ? (initStruct->period - 1) : 2) << SLED_TIM_PERIOD_Pos) |
+				 (((initStruct->high > 1) ? (initStruct->high - 1) : 1) << SLED_TIM_HIGH_Pos);
 }
 
 /****************************************************************************************************************************************** 
