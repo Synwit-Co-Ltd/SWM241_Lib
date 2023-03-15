@@ -18,6 +18,7 @@ int main(void)
 	
 	SerialInit();
 	
+	RTC_initStruct.clksrc = RTC_CLKSRC_LRC32K;
 	RTC_initStruct.Year = 2016;
 	RTC_initStruct.Month = 5;
 	RTC_initStruct.Date = 5;

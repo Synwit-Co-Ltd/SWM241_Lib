@@ -1,6 +1,11 @@
 #ifndef __SWM241_RTC_H__
 #define __SWM241_RTC_H__
 
+
+#define RTC_CLKSRC_LRC32K	0
+#define RTC_CLKSRC_XTAL32K	1
+
+
 #define RTC_SUN   0x01
 #define RTC_MON   0x02
 #define RTC_TUE   0x04
@@ -11,6 +16,7 @@
 
 
 typedef struct {
+	uint8_t  clksrc;	//RTC_CLKSRC_RC32K、RTC_CLKSRC_XTAL32K
 	uint16_t Year;
 	uint8_t  Month;		//取值1--12
 	uint8_t  Date;		//取值1--31

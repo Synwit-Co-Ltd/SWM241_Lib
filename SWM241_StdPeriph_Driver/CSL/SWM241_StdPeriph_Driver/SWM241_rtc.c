@@ -31,7 +31,18 @@ static uint32_t calcWeekDay(uint32_t year, uint32_t month, uint32_t date);
 * 注意事项: 无
 ******************************************************************************************************************************************/
 void RTC_Init(RTC_TypeDef * RTCx, RTC_InitStructure * initStruct)
-{	
+{
+	if(initStruct->clksrc == RTC_CLKSRC_XTAL32K)
+	{
+		SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (7 << SYS_XTALCR_32KDRV_Pos);
+	}
+	else
+	{
+		SYS->LRCCR = (1 << SYS_LRCCR_ON_Pos);
+	}
+	SYS->CLKSEL &= ~SYS_CLKSEL_RTC_Msk;
+	SYS->CLKSEL |= (initStruct->clksrc << SYS_CLKSEL_RTC_Pos);
+	
 	SYS->CLKEN1 |= (1 << SYS_CLKEN1_RTC_Pos);
 	
 	RTC_Stop(RTCx);

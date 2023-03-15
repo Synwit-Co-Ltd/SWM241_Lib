@@ -2648,14 +2648,6 @@ typedef struct {
     __IO uint32_t TRIM;                     //时钟调整
     
     __IO uint32_t TRIMM;                    //时钟微调整
-	
-	     uint32_t RESERVED[11];
-	
-	__IO uint32_t CALIBREFCNT;				//[23:0] 校准基准时钟频率的一半，校准基准时钟取值范围2.2~4.1MHz
-	
-	__IO uint32_t CALIBEN;					//[0] 启动校准，校准完成后自动清零
-	
-	__I  uint32_t CALIBST;
 } RTC_TypeDef;
 
 

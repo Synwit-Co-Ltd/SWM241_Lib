@@ -194,7 +194,7 @@ void switchToXTAL_32K(void)
 	
 	switchTo48MHz();
 	
-	SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (1 << SYS_XTALCR_32KDRV_Pos);
+	SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (7 << SYS_XTALCR_32KDRV_Pos);
 	for(i = 0; i < 1000; i++) __NOP();
 	
 	SYS->CLKDIVx_ON = 1;
