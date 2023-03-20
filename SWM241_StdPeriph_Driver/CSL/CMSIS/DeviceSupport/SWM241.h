@@ -319,28 +319,6 @@ typedef struct {
 #define SYS_XTALSR_STOP_Pos			1		//XTAL Stop，写1清零
 #define SYS_XTALSR_STOP_Msk			(0x01 << SYS_XTALSR_STOP_Pos)
 
-#define SYS_PLLCR_OUTEN_Pos		    0       //只能LOCK后设置
-#define SYS_PLLCR_OUTEN_Msk		    (0x01 << SYS_PLLCR_OUTEN_Pos)
-#define SYS_PLLCR_INSEL_Pos		    1       //0 XTAL    1 HRC
-#define SYS_PLLCR_INSEL_Msk		    (0x01 << SYS_PLLCR_INSEL_Pos)
-#define SYS_PLLCR_OFF_Pos		    2
-#define SYS_PLLCR_OFF_Msk		    (0x01 << SYS_PLLCR_OFF_Pos)
-#define SYS_PLLCR_RST_Pos			3
-#define SYS_PLLCR_RST_Msk			(0x01 << SYS_PLLCR_RST_Pos)
-
-#define SYS_PLLDIV_FBDIV_Pos		0       //PLL FeedBack分频寄存器
-											//VCO输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV
-											//PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV
-#define SYS_PLLDIV_FBDIV_Msk		(0x1FF << SYS_PLLDIV_FBDIV_Pos)
-#define SYS_PLLDIV_ADDIV_Pos		9       //ADC时钟基（即VCO输出分频后的时钟）经ADDIV分频后作为ADC的转换时钟
-#define SYS_PLLDIV_ADDIV_Msk		(0x1F << SYS_PLLDIV_ADDIV_Pos)
-#define SYS_PLLDIV_ADVCO_Pos		14		//0 VCO输出16分频作为ADC时钟基    1 VCO输出经过32分频作为ADC时钟基    2 VCO输出经过64分频作为ADC时钟基
-#define SYS_PLLDIV_ADVCO_Msk		(0x03 << SYS_PLLDIV_ADVCO_Pos)
-#define SYS_PLLDIV_INDIV_Pos		16      //PLL 输入源时钟分频
-#define SYS_PLLDIV_INDIV_Msk		(0x1F << SYS_PLLDIV_INDIV_Pos)
-#define SYS_PLLDIV_OUTDIV_Pos		24      //PLL 输出分频，0 8分频    1 4分频    0 2分频
-#define SYS_PLLDIV_OUTDIV_Msk		(0x03 << SYS_PLLDIV_OUTDIV_Pos)
-
 #define SYS_LRCCR_ON_Pos			0		//Low Speed RC On
 #define SYS_LRCCR_ON_Msk			(0x01 << SYS_LRCCR_ON_Pos)
 
@@ -1190,6 +1168,8 @@ typedef struct {
 #define UART_RTSCR_STAT_Pos			8		//RTS信号的当前状态
 #define UART_RTSCR_STAT_Msk			(0x01 << UART_RTSCR_STAT_Pos)
 
+#define UART_CFG_RXEN_Pos			0		//RX Enable
+#define UART_CFG_RXEN_Msk			(0x01 << UART_CFG_RXEN_Pos)
 #define UART_CFG_MSBF_Pos			1		//接收发送MSB First
 #define UART_CFG_MSBF_Msk			(0x01 << UART_CFG_MSBF_Pos)
 #define UART_CFG_BRKTXLEN_Pos		2		//1表示1bit，以此类推，默认值13
@@ -2272,7 +2252,7 @@ typedef struct {
 #define DMA_IF_CH1_Msk			    (0x01 << DMA_IF_CH1_Pos)
 
 #define DMA_CR_LEN_Pos				0       //此通道传输单位个数
-#define DMA_CR_LEN_Msk				(0xFFF<< DMA_CR_LEN_Pos)
+#define DMA_CR_LEN_Msk				(0xFFFFF<< DMA_CR_LEN_Pos)
 #define DMA_CR_RXEN_Pos				24		//软件启动传输，传输方向为SRC-->DST
 #define DMA_CR_RXEN_Msk				(0x01 << DMA_CR_RXEN_Pos)
 #define DMA_CR_TXEN_Pos				25		//软件启动传输，传输方向为DST-->SRC
