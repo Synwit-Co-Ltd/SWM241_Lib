@@ -29,7 +29,7 @@ typedef struct {
 
 /*  clk_src（SYS->CLKSEL.ADC）:  0 HRC   1 XTAL
 	sys_div（SYS->CLKSEL.ADC）:  0 1分频   2 4分频   3 8分频
-	adc_div0（ADC->CTRL4.CLKDIV0）: 0 4分频   1 2分频   2 1分频
+	adc_div0（ADC->CTRL3.CLKDIV0）: 0 4分频   1 2分频   2 1分频
 	adc_div1（ADC->CTRL2.CLKDIV1）: 0 4分频   1 2分频   2 1分频
 */
 #define ADC_CLKSRC(clk_src, sys_div, adc_div0, adc_div1) \

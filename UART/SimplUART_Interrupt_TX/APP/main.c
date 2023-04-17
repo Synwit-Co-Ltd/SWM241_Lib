@@ -1,6 +1,5 @@
-#include "SWM241.h"
-
 #include <string.h>
+#include "SWM241.h"
 
 
 void SerialInit(void);
@@ -15,6 +14,9 @@ int main(void)
 	SystemInit();
 	
 	SerialInit();
+	
+	GPIO_INIT(GPIOA, PIN6, GPIO_OUTPUT);
+	GPIO_INIT(GPIOA, PIN7, GPIO_OUTPUT);
    	
 	while(1==1)
 	{
@@ -35,12 +37,12 @@ void UART_SendChars(char data[], uint32_t len)
 	UART_TXCount = len;
 	UART_TXIndex = 0;
 	
-	UART_INTTXThresholdEn(UART0);
+	UART_INTEn(UART0, UART_IT_TX_THR | UART_IT_TX_DONE);
 }
 
 void UART0_Handler(void)
 {
-	if(UART_INTTXThresholdStat(UART0))
+	if(UART_INTStat(UART0, UART_IT_TX_THR))
 	{
 		while(UART_IsTXFIFOFull(UART0) == 0)
 		{
@@ -52,13 +54,22 @@ void UART0_Handler(void)
 			}
 			else
 			{
-				UART_INTTXThresholdDis(UART0);
+				UART_INTDis(UART0, UART_IT_TX_THR);
 				
 				break;
 			}
 		}
+		
+		GPIO_InvBit(GPIOA, PIN6);
+	}
+	else if(UART_INTStat(UART0, UART_IT_TX_DONE))
+	{
+		GPIO_InvBit(GPIOA, PIN7);
+		
+		UART_INTDis(UART0, UART_IT_TX_DONE);
 	}
 }
+
 
 void SerialInit(void)
 {

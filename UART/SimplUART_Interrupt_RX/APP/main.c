@@ -1,73 +1,51 @@
 #include "SWM241.h"
+#include "CircleBuffer.h"
 
-#include <string.h>
+CircleBuffer_t CirBuf;
 
 
 void SerialInit(void);
 
-#define UART_RX_LEN	 128
-
-uint32_t UART_GetChars(char *data);
-
 int main(void)
 {
-	uint32_t len, i;
-	char buffer[UART_RX_LEN] = {0};
-	
 	SystemInit();
 	
 	SerialInit();
+	
+	GPIO_INIT(GPIOA, PIN6, GPIO_OUTPUT);
    	
 	while(1==1)
 	{
-		if((len = UART_GetChars(buffer)) != 0)
-		{
-			for(i = 0; i < len; i++)
-				printf("%c", buffer[i]);
-		}
+		uint8_t chr;
+		if(CirBuf_Read(&CirBuf, &chr, 1))
+			printf("%c", chr);
 	}
 }
 
-
-char UART_RXBuffer[UART_RX_LEN] = {0};
-uint32_t UART_RXIndex = 0;
-
-uint32_t UART_GetChars(char *data)
-{
-	uint32_t len = 0;
-	
-	if(UART_RXIndex != 0)
-	{
-		NVIC_DisableIRQ(UART0_IRQn);		//从UART_RXBuffer读取数据过程中要关闭中断，防止读写混乱
-		memcpy(data, UART_RXBuffer, UART_RX_LEN);
-		len = UART_RXIndex;
-		UART_RXIndex = 0;
-		NVIC_EnableIRQ(UART0_IRQn);
-	}
-	
-	return len;
-}
 
 void UART0_Handler(void)
 {
 	uint32_t chr;
 	
-	if(UART_INTRXThresholdStat(UART0) || UART_INTTimeoutStat(UART0))
+	if(UART_INTStat(UART0, UART_IT_RX_THR | UART_IT_RX_TOUT))
 	{
 		while(UART_IsRXFIFOEmpty(UART0) == 0)
 		{
 			if(UART_ReadByte(UART0, &chr) == 0)
 			{
-				if(UART_RXIndex < UART_RX_LEN)
-				{
-					UART_RXBuffer[UART_RXIndex] = chr;
-					
-					UART_RXIndex++;
-				}
+				CirBuf_Write(&CirBuf, (uint8_t *)&chr, 1);
 			}
+		}
+		
+		if(UART_INTStat(UART0, UART_IT_RX_TOUT))
+		{
+			UART_INTClr(UART0, UART_IT_RX_TOUT);
+			
+			GPIO_InvBit(GPIOA, PIN6);
 		}
 	}
 }
+
 
 void SerialInit(void)
 {
