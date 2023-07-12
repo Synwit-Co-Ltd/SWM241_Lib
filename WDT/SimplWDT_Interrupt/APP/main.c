@@ -3,27 +3,18 @@
 void SerialInit(void);
 
 int main(void)
-{
-	WDT_InitStructure WDT_initStruct;
-	
+{	
 	SystemInit();
 	
 	SerialInit();
 		
 	GPIO_Init(GPIOA, PIN5, 1, 0, 0, 0);			//输出，接LED
 	
-	WDT_initStruct.int_period = 100;			//约100ms
-	WDT_initStruct.int_en = 1;
-	WDT_initStruct.rst_period = 500;			//约500ms
-	WDT_initStruct.rst_en = 0;
-	WDT_initStruct.win_en = 0;
-	WDT_Init(WDT, &WDT_initStruct);
-		
+	WDT_Init(WDT, 500, 0);
 	WDT_Start(WDT);								//启动WDT
 
 	while(1==1)
 	{
-		
 	}
 }
 

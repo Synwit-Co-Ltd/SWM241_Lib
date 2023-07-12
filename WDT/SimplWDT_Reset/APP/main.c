@@ -4,7 +4,6 @@
 int main(void)
 {
 	uint32_t i;
-	WDT_InitStructure WDT_initStruct;
 
 	SystemInit();
 	
@@ -13,13 +12,7 @@ int main(void)
 	GPIO_Init(GPIOA, PIN5, 1, 0, 0, 0);			//输出，接LED
 	GPIO_SetBit(GPIOA, PIN5);					//点亮LED
 	
-	WDT_initStruct.int_period = 100;			//约100ms
-	WDT_initStruct.int_en = 0;
-	WDT_initStruct.rst_period = 500;			//约500ms
-	WDT_initStruct.rst_en = 1;
-	WDT_initStruct.win_en = 0;
-	WDT_Init(WDT, &WDT_initStruct);
-	
+	WDT_Init(WDT, 0, 1000);
 	WDT_Start(WDT);								//启动WDT
 	
 	while(1==1)

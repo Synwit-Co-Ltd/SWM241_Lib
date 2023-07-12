@@ -26,36 +26,55 @@
 * 函数名称:	WDT_Init()
 * 功能说明:	WDT看门狗初始化
 * 输    入: WDT_TypeDef * WDTx		指定要被设置的看门狗，有效值包括WDT
-*			WDT_InitStructure * initStruct	包含WDT相关设定值的结构体
+*			uint32_t int_period		中断周期，取值1--65534，单位1/1000秒，取值0表示关闭WDT中断功能
+*			uint32_t rst_period		复位周期，取值1--65534，单位1/1000秒，取值0表示关闭WDT复位功能
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void WDT_Init(WDT_TypeDef * WDTx, WDT_InitStructure * initStruct)
+void WDT_Init(WDT_TypeDef * WDTx, uint32_t int_period, uint32_t rst_period)
 {
 	SYS->CLKEN0 |= (1 << SYS_CLKEN0_WDT_Pos);
+	
+	SYS->CLKSEL &= ~SYS_CLKSEL_WDT_Msk;
+	SYS->CLKSEL |= (2 << SYS_CLKSEL_WDT_Pos);	//片内32k作为WDT计数时钟源
 	
 	WDT_Stop(WDTx);		//设置前先关闭
 	
 	/* 当 WDT 已经在运行中，第二次执行 WDT_Init()，且设置的 rst_period 比当前计数器值还小时，
-	   WDT 需要计数到 2^32 溢出返回 0，才能触发中断和复位，这里执行一下喂狗，保证计数器从零重新计数，避免上述问题 */
+	   WDT 需要计数到 2^16 溢出返回 0，才能触发中断和复位，这里执行一下喂狗，保证计数器从零重新计数，避免上述问题 */
 	WDT_Feed(WDTx);
 	
-	SYS->LRCCR |= (1 << SYS_LRCCR_ON_Pos);
+	WDTx->CR &= ~WDT_CR_CLKDIV_Msk;
+	WDTx->CR |= (4 << WDT_CR_CLKDIV_Pos);		//时钟32分频
 	
-	SYS->CLKSEL &= ~SYS_CLKSEL_WDT_Msk;
-	SYS->CLKSEL |= (2 << SYS_CLKSEL_WDT_Pos);
+	if(int_period == 0)
+	{
+		WDTx->CR &= ~(1 << WDT_CR_INTEN_Pos);
+		
+		NVIC_DisableIRQ(WDT_IRQn);
+	}
+	else
+	{
+		WDTx->CR |=  (1 << WDT_CR_INTEN_Pos);
+		
+		WDTx->INTVAL = int_period;
+		
+		WDTx->IF = 1;
+		NVIC_EnableIRQ(WDT_IRQn);
+	}
 	
-	WDTx->CR = (initStruct->rst_en << WDT_CR_RSTEN_Pos) |
-			   (initStruct->int_en << WDT_CR_INTEN_Pos) |
-			   (initStruct->win_en << WDT_CR_WINEN_Pos) |
-			   (4 << WDT_CR_CLKDIV_Pos);
-	
-	WDTx->INTVAL = initStruct->int_period;
-	
-	WDTx->RSTVAL = initStruct->rst_period;
-	
-	WDTx->IF = 0;
-	if(initStruct->int_en) NVIC_EnableIRQ(WDT_IRQn);
+	if(rst_period == 0)
+	{
+		WDTx->CR &= ~(1 << WDT_CR_RSTEN_Pos);
+		
+		WDTx->RSTVAL = int_period + 1;
+	}
+	else
+	{
+		WDTx->CR |=  (1 << WDT_CR_RSTEN_Pos);
+		
+		WDTx->RSTVAL = rst_period;
+	}
 }
 
 /****************************************************************************************************************************************** 
