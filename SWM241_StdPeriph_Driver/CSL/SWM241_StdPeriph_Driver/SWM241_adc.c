@@ -20,6 +20,9 @@
 #include "SWM241_adc.h"
 
 
+static uint32_t ADC_K, ADC_Offset;
+
+
 /****************************************************************************************************************************************** 
 * 函数名称: ADC_Init()
 * 功能说明:	ADC模数转换器初始化
@@ -46,10 +49,9 @@ void ADC_Init(ADC_TypeDef * ADCx, ADC_InitStructure * initStruct)
 	ADC->CTRL1 &= ~(0x0F << 16);
 	ADC->CTRL1 |= (0x0F << 16);
 	
-// 	ADCx->CALIBSET = (((SYS->CHIPID[2] >>  0) & 0xFFFF) << ADC_CALIBSET_OFFSET_Pos) | 
-// 	                 (((SYS->CHIPID[2] >> 16) & 0xFFFF) << ADC_CALIBSET_K_Pos);
-// 	
-// 	ADCx->CALIBEN = (1 << ADC_CALIBEN_OFFSET_Pos) | (1 << ADC_CALIBEN_K_Pos);
+	ADC_Offset = (SYS->BACKUP[2] >>  0) & 0xFFFF;
+	ADC_K = (SYS->BACKUP[2] >> 16) & 0xFFFF;
+	ADC_K = ADC_K * 1.024;
 	
 	ADCx->CTRL1 &= ~ADC_CTRL1_CLKSRC_Msk;
 	ADCx->CTRL1 |= (0 << ADC_CTRL1_CLKSRC_Pos);
@@ -224,9 +226,23 @@ static uint32_t chn2idx(uint32_t chn)
 ******************************************************************************************************************************************/
 uint32_t ADC_Read(ADC_TypeDef * ADCx, uint32_t chn)
 {
+	uint32_t val;
 	uint32_t idx = chn2idx(chn);
 	
-	return (ADCx->CH[idx].DATA & ADC_DATA_VALUE_Msk);
+	val = (ADCx->CH[idx].DATA & ADC_DATA_VALUE_Msk);
+	
+	if(val < ADC_Offset)
+	{
+		val = 0;
+	}
+	else
+	{
+		val = ((val - ADC_Offset) * ADC_K) >> 10;
+		if(val > 4095)
+			val = 4095;
+	}
+	
+	return val;
 }
 
 /****************************************************************************************************************************************** 

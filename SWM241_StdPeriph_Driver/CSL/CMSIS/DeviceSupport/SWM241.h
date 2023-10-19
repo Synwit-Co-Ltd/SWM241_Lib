@@ -106,7 +106,9 @@ typedef struct {
 	
 	__I  uint32_t CHIPID[4];
 	
-	 uint32_t RESERVED5[16];
+	__IO uint32_t BACKUP[4];
+	
+	 uint32_t RESERVED5[12];
 
 	__IO uint32_t PRNGCR;
 	__IO uint32_t PRNGDL;
