@@ -231,6 +231,8 @@ uint32_t ADC_Read(ADC_TypeDef * ADCx, uint32_t chn)
 	
 	val = (ADCx->CH[idx].DATA & ADC_DATA_VALUE_Msk);
 	
+	ADCx->CH[idx].STAT = ADC_STAT_EOC_Msk;	//ЧхГ§EOCБъжО
+	
 	if(val < ADC_Offset)
 	{
 		val = 0;
