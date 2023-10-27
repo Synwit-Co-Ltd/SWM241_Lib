@@ -30,7 +30,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTA_PIN3_TIMR2_OUT	5
 #define PORTA_PIN3_SLED_SEG11	6
 #define PORTA_PIN3_SLCD_SEG18	15
-#define PORTA_PIN3_ADC_IN11		15
+#define PORTA_PIN3_ADC_IN11		0
 
 #define PORTA_PIN4_GPIO			0
 #define PORTA_PIN4_UART0_TX		1
@@ -53,19 +53,19 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTA_PIN7_UART2_RTS	2
 #define PORTA_PIN7_SLED_SEG12	3
 #define PORTA_PIN7_SLCD_SEG9	15
-#define PORTA_PIN7_ADC_IN7		15
+#define PORTA_PIN7_ADC_IN7		0
 
 #define PORTA_PIN8_GPIO		 	0
 #define PORTA_PIN8_UART2_CTS	1
 #define PORTA_PIN8_SLED_SEG13	2
 #define PORTA_PIN8_SLCD_SEG10	15
-#define PORTA_PIN8_ADC_IN6		15
+#define PORTA_PIN8_ADC_IN6		0
 
 #define PORTA_PIN9_GPIO			0
 #define PORTA_PIN9_PWM0B		1
 #define PORTA_PIN9_SLED_SEG14	2
 #define PORTA_PIN9_SLCD_SEG11	15
-#define PORTA_PIN9_ADC_IN5		15
+#define PORTA_PIN9_ADC_IN5		0
 
 #define PORTA_PIN10_GPIO		0
 #define PORTA_PIN10_SWCLK		1
@@ -73,20 +73,20 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTA_PIN10_TIMR7_OUT	3
 #define PORTA_PIN10_SLED_SEG15	4
 #define PORTA_PIN10_SLCD_SEG12	15
-#define PORTA_PIN10_ADC_IN4		15
+#define PORTA_PIN10_ADC_IN4		0
 
 #define PORTA_PIN11_GPIO		0
 #define PORTA_PIN11_SWDIO		1
 #define PORTA_PIN11_PWM3A		2
 #define PORTA_PIN11_SLED_SEG16	3
 #define PORTA_PIN11_SLCD_SEG13	15
-#define PORTA_PIN11_ADC_IN3		15
+#define PORTA_PIN11_ADC_IN3		0
 
 #define PORTA_PIN12_GPIO		0
 #define PORTA_PIN12_TIMR6_IN	1
 #define PORTA_PIN12_TIMR6_OUT	2
 #define PORTA_PIN12_SLCD_SEG14	15
-#define PORTA_PIN12_ADC_IN2		15
+#define PORTA_PIN12_ADC_IN2		0
 
 #define PORTA_PIN13_GPIO		0
 #define POATA_PIN13_PWM3B		1
@@ -186,7 +186,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTB_PIN9_UART1_RX		1
 #define PORTB_PIN9_SLED_SEG7	2
 #define PORTB_PIN9_SLCD_SEG8	15
-#define PORTB_PIN9_ADC_IN8		15
+#define PORTB_PIN9_ADC_IN8		0
 
 
 #define PORTC_PIN0_GPIO		 	0
@@ -309,7 +309,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTD_PIN13_TIMR0_OUT	4
 #define PORTD_PIN13_SLED_SEG8	5
 #define PORTD_PIN13_SLCD_SEG15	15
-#define PORTD_PIN13_ADC_IN9		15
+#define PORTD_PIN13_ADC_IN9		0
 
 #define PORTD_PIN14_GPIO		0
 #define PORTD_PIN14_SPI0_MOSI	1
@@ -318,7 +318,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTD_PIN14_TIMR0_IN	4
 #define PORTD_PIN14_SLED_SEG9	5
 #define PORTD_PIN14_SLCD_SEG16	15
-#define PORTD_PIN14_ADC_IN10	15
+#define PORTD_PIN14_ADC_IN10	0
 
 #define PORTD_PIN15_GPIO		0
 #define PORTD_PIN15_SPI0_SSEL	1
