@@ -196,7 +196,7 @@ uint32_t UART_IsTXFIFOFull(UART_TypeDef * UARTx)
 ******************************************************************************************************************************************/
 void UART_SetBaudrate(UART_TypeDef * UARTx, uint32_t baudrate)
 {
-	UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
+	UARTx->BAUD &= ~(UART_BAUD_BAUD_Msk | UART_BAUD_FRAC_Msk);
 	UARTx->BAUD |= (((SystemCoreClock/baudrate - 1) / 16) << UART_BAUD_BAUD_Pos) |
 				   (((SystemCoreClock/baudrate - 1) % 16) << UART_BAUD_FRAC_Pos);
 }
