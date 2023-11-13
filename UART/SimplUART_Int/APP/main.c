@@ -1,8 +1,9 @@
 #include "SWM241.h"
 #include "CircleBuffer.h"
 
-CircleBuffer_t CirBuf;
+volatile bool msg_rcvd = false;
 
+CircleBuffer_t CirBuf;
 
 void SerialInit(void);
 
@@ -11,14 +12,15 @@ int main(void)
 	SystemInit();
 	
 	SerialInit();
-	
-	GPIO_INIT(GPIOA, PIN6, GPIO_OUTPUT);
-   	
+	   	
 	while(1==1)
 	{
-		uint8_t chr;
-		if(CirBuf_Read(&CirBuf, &chr, 1))
-			printf("%c", chr);
+		if(msg_rcvd)
+		{
+			msg_rcvd = false;
+			
+			UART_INTEn(UART0, UART_IT_TX_THR);
+		}
 	}
 }
 
@@ -41,7 +43,26 @@ void UART0_Handler(void)
 		{
 			UART_INTClr(UART0, UART_IT_RX_TOUT);
 			
-			GPIO_InvBit(GPIOA, PIN6);
+			msg_rcvd = true;
+		}
+	}
+	
+	if(UART_INTStat(UART0, UART_IT_TX_THR))
+	{
+		while(!UART_IsTXFIFOFull(UART0))
+		{
+			if(!CirBuf_Empty(&CirBuf))
+			{
+				CirBuf_Read(&CirBuf, (uint8_t *)&chr, 1);
+				
+				UART_WriteByte(UART0, chr);
+			}
+			else
+			{
+				UART_INTDis(UART0, UART_IT_TX_THR);
+				
+				break;
+			}
 		}
 	}
 }

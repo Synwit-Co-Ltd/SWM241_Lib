@@ -67,7 +67,8 @@ void UART_Init(UART_TypeDef * UARTx, UART_InitStructure * initStruct)
 				   (initStruct->TXThreshold << UART_FIFO_TXTHR_Pos);
 	
 	UARTx->TOCR &= ~UART_TOCR_TIME_Msk;
-	UARTx->TOCR |= (initStruct->TimeoutTime << UART_TOCR_TIME_Pos);
+	UARTx->TOCR |= (1 << UART_TOCR_MODE_Pos) |
+				   (initStruct->TimeoutTime << UART_TOCR_TIME_Pos);
 	
 	UARTx->CTRL &= ~(UART_CTRL_RXIE_Msk | UART_CTRL_TXIE_Msk | UART_CTRL_TOIE_Msk);
 	UARTx->CTRL |= (initStruct->RXThresholdIEn << UART_CTRL_RXIE_Pos) |
