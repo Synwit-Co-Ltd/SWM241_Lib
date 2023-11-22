@@ -10,8 +10,8 @@ typedef struct {
 	uint16_t trig_src;		//ADC触发方式：ADC_TRIGSRC_SW、ADC_TRIGSRC_PWM、ADC_TRIGSRC_TIMR2、ADC_TRIGSRC_TIMR3、ADC_TRIGSRC_PIN
 	uint8_t  Continue;		//在软件触发模式下：1 连续转换模式，启动后一直采样、转换，直到软件清除START位
 							//                  0 单次转换模式，转换完成后START位自动清除停止转换
-	uint8_t  EOC_IEn;		//EOC中断使能，可针对每个通道设置，其有效值为ADC_CH0、ADC_CH1、... ... 、ADC_CH11及其组合（即“按位或”运算）
-	uint8_t  OVF_IEn;		//OVF中断使能，可针对每个通道设置，其有效值为ADC_CH0、ADC_CH1、... ... 、ADC_CH11及其组合（即“按位或”运算）
+	uint16_t  EOC_IEn;		//EOC中断使能，可针对每个通道设置，其有效值为ADC_CH0、ADC_CH1、... ... 、ADC_CH11及其组合（即“按位或”运算）
+	uint16_t  OVF_IEn;		//OVF中断使能，可针对每个通道设置，其有效值为ADC_CH0、ADC_CH1、... ... 、ADC_CH11及其组合（即“按位或”运算）
 } ADC_InitStructure;
 
 #define ADC_CH0		0x01
