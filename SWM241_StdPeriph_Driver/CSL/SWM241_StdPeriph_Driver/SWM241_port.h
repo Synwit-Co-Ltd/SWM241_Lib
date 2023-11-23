@@ -89,7 +89,7 @@ void PORT_Init(PORT_TypeDef * PORTx, uint32_t n, uint32_t func, uint32_t digit_i
 #define PORTA_PIN12_ADC_IN2		0
 
 #define PORTA_PIN13_GPIO		0
-#define POATA_PIN13_PWM3B		1
+#define PORTA_PIN13_PWM3B		1
 #define PORTA_PIN13_ADC_IN1		15
 
 #define PORTA_PIN14_GPIO		0
