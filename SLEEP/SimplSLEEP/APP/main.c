@@ -16,6 +16,14 @@ int main(void)
 	GPIO_Init(GPIOA, PIN4, 0, 1, 0, 0);				//接按键，上拉使能
 	SYS->PAWKEN |= (1 << PIN4);						//开启PA4引脚低电平唤醒
 	
+	/* 加入这三句可将功耗降至最低 */
+#if 0
+	PORT_Init(PORTA, PIN15, 0, 0);
+	
+	PORT_Init(PORTA, PIN10, 0, 0);
+	PORT_Init(PORTA, PIN11, 0, 0);
+#endif
+	
 	while(1==1)
 	{
 		GPIO_SetBit(GPIOA, PIN5);					//点亮LED
