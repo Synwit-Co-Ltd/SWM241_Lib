@@ -130,9 +130,9 @@ typedef struct {
 	
 	uint32_t RESERVED8[(0x720-0x13C)/4-1];
 	
-	__IO uint32_t PRSTEN;					//外设复位使能，只有当PRSTEN的值为0x55时，才能写PRSTR1、PRSTR2
+	__IO uint32_t PRSTEN;					//外设复位使能，只有当PRSTEN的值为0x55时，才能写PRSTR0、PRSTR1
+	__IO uint32_t PRSTR0;
 	__IO uint32_t PRSTR1;
-	__IO uint32_t PRSTR2;
 
     //Analog Control: 0x400AA000
     uint32_t RESERVED9[(0x400AA000-0x40000728)/4-1];
@@ -242,53 +242,53 @@ typedef struct {
 #define SYS_RTCWKSR_FLAG_Pos		0		//RTC唤醒标志，写1清零
 #define SYS_RTCWKSR_FLAG_Msk		(0x01 << SYS_RTCWKSR_FLAG_Pos)
 
-#define SYS_PRSTR1_GPIOA_Pos		0		//1 复位GPIOA    0 不复位
-#define SYS_PRSTR1_GPIOA_Msk		(0x01 << SYS_PRSTR1_GPIOA_Pos)
-#define SYS_PRSTR1_GPIOB_Pos		1
-#define SYS_PRSTR1_GPIOB_Msk		(0x01 << SYS_PRSTR1_GPIOB_Pos)
-#define SYS_PRSTR1_GPIOC_Pos		2
-#define SYS_PRSTR1_GPIOC_Msk		(0x01 << SYS_PRSTR1_GPIOC_Pos)
-#define SYS_PRSTR1_GPIOD_Pos		3
-#define SYS_PRSTR1_GPIOD_Msk		(0x01 << SYS_PRSTR1_GPIOD_Pos)
-#define SYS_PRSTR1_UART0_Pos		6
-#define SYS_PRSTR1_UART0_Msk		(0x01 << SYS_PRSTR1_UART0_Pos)
-#define SYS_PRSTR1_UART1_Pos		7
-#define SYS_PRSTR1_UART1_Msk		(0x01 << SYS_PRSTR1_UART1_Pos)
-#define SYS_PRSTR1_UART2_Pos		8
-#define SYS_PRSTR1_UART2_Msk		(0x01 << SYS_PRSTR1_UART2_Pos)
-#define SYS_PRSTR1_UART3_Pos		9
-#define SYS_PRSTR1_UART3_Msk		(0x01 << SYS_PRSTR1_UART3_Pos)
-#define SYS_PRSTR1_WDT_Pos			10
-#define SYS_PRSTR1_WDT_Msk			(0x01 << SYS_PRSTR1_WDT_Pos)
-#define SYS_PRSTR1_TIMR_Pos			11
-#define SYS_PRSTR1_TIMR_Msk			(0x01 << SYS_PRSTR1_TIMR_Pos)
-#define SYS_PRSTR1_PWM_Pos			12
-#define SYS_PRSTR1_PWM_Msk			(0x01 << SYS_PRSTR1_PWM_Pos)
-#define SYS_PRSTR1_SPI0_Pos			13
-#define SYS_PRSTR1_SPI0_Msk			(0x01 << SYS_PRSTR1_SPI0_Pos)
-#define SYS_PRSTR1_SPI1_Pos			14
-#define SYS_PRSTR1_SPI1_Msk			(0x01 << SYS_PRSTR1_SPI1_Pos)
-#define SYS_PRSTR1_I2C0_Pos			15
-#define SYS_PRSTR1_I2C0_Msk			(0x01 << SYS_PRSTR1_I2C0_Pos)
-#define SYS_PRSTR1_I2C1_Pos			16
-#define SYS_PRSTR1_I2C1_Msk			(0x01 << SYS_PRSTR1_I2C1_Pos)
-#define SYS_PRSTR1_CRC_Pos			19
-#define SYS_PRSTR1_CRC_Msk			(0x01 << SYS_PRSTR1_CRC_Pos)
-#define SYS_PRSTR1_DIV_Pos			21
-#define SYS_PRSTR1_DIV_Msk			(0x01 << SYS_PRSTR1_DIV_Pos)
-#define SYS_PRSTR1_ANAC_Pos			25
-#define SYS_PRSTR1_ANAC_Msk			(0x01 << SYS_PRSTR1_ANAC_Pos)
-#define SYS_PRSTR1_ADC0_Pos			26
-#define SYS_PRSTR1_ADC0_Msk			(0x01 << SYS_PRSTR1_ADC0_Pos)
-#define SYS_PRSTR1_CAN_Pos			28
-#define SYS_PRSTR1_CAN_Msk			(0x01u<< SYS_PRSTR1_CAN_Pos)
-#define SYS_PRSTR1_SLCD_Pos			29
-#define SYS_PRSTR1_SLCD_Msk			(0x01u<< SYS_PRSTR1_SLCD_Pos)
-#define SYS_PRSTR1_SLED_Pos			31
-#define SYS_PRSTR1_SLED_Msk			(0x01u<< SYS_PRSTR1_SLED_Pos)
+#define SYS_PRSTR0_GPIOA_Pos		0		//1 复位GPIOA    0 不复位
+#define SYS_PRSTR0_GPIOA_Msk		(0x01 << SYS_PRSTR0_GPIOA_Pos)
+#define SYS_PRSTR0_GPIOB_Pos		1
+#define SYS_PRSTR0_GPIOB_Msk		(0x01 << SYS_PRSTR0_GPIOB_Pos)
+#define SYS_PRSTR0_GPIOC_Pos		2
+#define SYS_PRSTR0_GPIOC_Msk		(0x01 << SYS_PRSTR0_GPIOC_Pos)
+#define SYS_PRSTR0_GPIOD_Pos		3
+#define SYS_PRSTR0_GPIOD_Msk		(0x01 << SYS_PRSTR0_GPIOD_Pos)
+#define SYS_PRSTR0_UART0_Pos		6
+#define SYS_PRSTR0_UART0_Msk		(0x01 << SYS_PRSTR0_UART0_Pos)
+#define SYS_PRSTR0_UART1_Pos		7
+#define SYS_PRSTR0_UART1_Msk		(0x01 << SYS_PRSTR0_UART1_Pos)
+#define SYS_PRSTR0_UART2_Pos		8
+#define SYS_PRSTR0_UART2_Msk		(0x01 << SYS_PRSTR0_UART2_Pos)
+#define SYS_PRSTR0_UART3_Pos		9
+#define SYS_PRSTR0_UART3_Msk		(0x01 << SYS_PRSTR0_UART3_Pos)
+#define SYS_PRSTR0_WDT_Pos			10
+#define SYS_PRSTR0_WDT_Msk			(0x01 << SYS_PRSTR0_WDT_Pos)
+#define SYS_PRSTR0_TIMR_Pos			11
+#define SYS_PRSTR0_TIMR_Msk			(0x01 << SYS_PRSTR0_TIMR_Pos)
+#define SYS_PRSTR0_PWM_Pos			12
+#define SYS_PRSTR0_PWM_Msk			(0x01 << SYS_PRSTR0_PWM_Pos)
+#define SYS_PRSTR0_SPI0_Pos			13
+#define SYS_PRSTR0_SPI0_Msk			(0x01 << SYS_PRSTR0_SPI0_Pos)
+#define SYS_PRSTR0_SPI1_Pos			14
+#define SYS_PRSTR0_SPI1_Msk			(0x01 << SYS_PRSTR0_SPI1_Pos)
+#define SYS_PRSTR0_I2C0_Pos			15
+#define SYS_PRSTR0_I2C0_Msk			(0x01 << SYS_PRSTR0_I2C0_Pos)
+#define SYS_PRSTR0_I2C1_Pos			16
+#define SYS_PRSTR0_I2C1_Msk			(0x01 << SYS_PRSTR0_I2C1_Pos)
+#define SYS_PRSTR0_CRC_Pos			19
+#define SYS_PRSTR0_CRC_Msk			(0x01 << SYS_PRSTR0_CRC_Pos)
+#define SYS_PRSTR0_DIV_Pos			21
+#define SYS_PRSTR0_DIV_Msk			(0x01 << SYS_PRSTR0_DIV_Pos)
+#define SYS_PRSTR0_ANAC_Pos			25
+#define SYS_PRSTR0_ANAC_Msk			(0x01 << SYS_PRSTR0_ANAC_Pos)
+#define SYS_PRSTR0_ADC0_Pos			26
+#define SYS_PRSTR0_ADC0_Msk			(0x01 << SYS_PRSTR0_ADC0_Pos)
+#define SYS_PRSTR0_CAN_Pos			28
+#define SYS_PRSTR0_CAN_Msk			(0x01u<< SYS_PRSTR0_CAN_Pos)
+#define SYS_PRSTR0_SLCD_Pos			29
+#define SYS_PRSTR0_SLCD_Msk			(0x01u<< SYS_PRSTR0_SLCD_Pos)
+#define SYS_PRSTR0_SLED_Pos			31
+#define SYS_PRSTR0_SLED_Msk			(0x01u<< SYS_PRSTR0_SLED_Pos)
 
-#define SYS_PRSTR2_RTC_Pos			19
-#define SYS_PRSTR2_RTC_Msk			(0x01 << SYS_PRSTR2_RTC_Pos)
+#define SYS_PRSTR1_RTC_Pos			19
+#define SYS_PRSTR1_RTC_Msk			(0x01 << SYS_PRSTR1_RTC_Pos)
 
 #define SYS_HRCCR_ON_Pos			0		//High speed RC ON
 #define SYS_HRCCR_ON_Msk			(0x01 << SYS_HRCCR_ON_Pos)
