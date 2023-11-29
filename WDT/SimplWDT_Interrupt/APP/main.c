@@ -3,20 +3,21 @@
 void SerialInit(void);
 
 int main(void)
-{	
+{
 	SystemInit();
 	
 	SerialInit();
-		
+	
 	GPIO_Init(GPIOA, PIN5, 1, 0, 0, 0);			//Êä³ö£¬½ÓLED
 	
 	WDT_Init(WDT, 500, 0);
 	WDT_Start(WDT);								//Æô¶¯WDT
-
+	
 	while(1==1)
 	{
 	}
 }
+
 
 void WDT_Handler(void)
 {
@@ -26,6 +27,7 @@ void WDT_Handler(void)
 	
 	printf("WDT Handler\r\n");
 }
+
 
 void SerialInit(void)
 {

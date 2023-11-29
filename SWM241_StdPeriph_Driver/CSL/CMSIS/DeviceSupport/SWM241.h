@@ -2525,7 +2525,7 @@ typedef struct {
 #define WDT_CR_INTEN_Msk			(0x01 << WDT_CR_INTEN_Pos)
 #define WDT_CR_WINEN_Pos			3		//窗口功能使能，使能后，在WDT计数值小于INTVAL时喂狗立即复位
 #define WDT_CR_WINEN_Msk			(0x01 << WDT_CR_WINEN_Pos)
-#define WDT_CR_CLKDIV_Pos			8
+#define WDT_CR_CLKDIV_Pos			8		//0 2分频   1 4分频   2 8分频   3 16分频   4 32分频 ...
 #define WDT_CR_CLKDIV_Msk			(0x0F << WDT_CR_CLKDIV_Pos)
 
 
