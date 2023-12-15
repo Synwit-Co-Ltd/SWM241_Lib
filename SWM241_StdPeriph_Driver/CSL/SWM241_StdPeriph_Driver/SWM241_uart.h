@@ -76,7 +76,7 @@ uint32_t UART_CTSLineState(UART_TypeDef * UARTx);
 void UART_RTSConfig(UART_TypeDef * UARTx, uint32_t enable, uint32_t polarity, uint32_t threshold);
 uint32_t UART_RTSLineState(UART_TypeDef * UARTx);
 
-void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedIEn, uint32_t generatedIEn);
+void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedLen, uint32_t detectedIEn, uint32_t generatedLen, uint32_t generatedIEn);
 void UART_LINGenerate(UART_TypeDef * UARTx);
 uint32_t UART_LINIsDetected(UART_TypeDef * UARTx);
 uint32_t UART_LINIsGenerated(UART_TypeDef * UARTx);
