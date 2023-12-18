@@ -282,8 +282,12 @@ uint32_t UART_RTSLineState(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedIEn, uint32_t generatedIEn)
+void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedLen, uint32_t detectedIEn, uint32_t generatedLen, uint32_t generatedIEn)
 {
+	UARTx->CFG &= ~(UART_CFG_BRKTXLEN_Msk | UART_CFG_BRKRXLEN_Msk);
+	UARTx->CFG |= ((detectedLen-1) << UART_CFG_BRKRXLEN_Pos) |
+				  (generatedLen    << UART_CFG_BRKTXLEN_Pos);
+	
 	UARTx->LINCR &= ~(UART_LINCR_BRKDETIE_Msk | UART_LINCR_GENBRKIE_Msk);
 	UARTx->LINCR |= (detectedIEn  << UART_LINCR_BRKDETIE_Pos) |
 					(generatedIEn << UART_LINCR_GENBRKIE_Pos);
