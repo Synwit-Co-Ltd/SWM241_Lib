@@ -16,6 +16,7 @@ int main(void)
 	GPIO_SetBit(GPIOA, PIN5);						//点亮LED
 	for(i = 0; i < SystemCoreClock/2; i++);			//延时，防止上电后SWD立即切掉无法下载程序
 	
+	RTC_initStruct.clksrc = RTC_CLKSRC_LRC32K;
 	RTC_initStruct.Year = 2016;
 	RTC_initStruct.Month = 5;
 	RTC_initStruct.Date = 5;
