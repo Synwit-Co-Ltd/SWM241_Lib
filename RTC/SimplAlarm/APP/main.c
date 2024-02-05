@@ -7,6 +7,7 @@ volatile uint32_t F_Second = 0,
                   F_Alarm  = 0;
 
 
+void XTAL32K_Enable(void);
 void SerialInit(void);
 
 int main(void)
@@ -18,7 +19,9 @@ int main(void)
 	
 	SerialInit();
 	
-	RTC_initStruct.clksrc = RTC_CLKSRC_LRC32K;
+  XTAL32K_Enable();
+  
+	RTC_initStruct.clksrc = RTC_CLKSRC_XTAL32K;
 	RTC_initStruct.Year = 2016;
 	RTC_initStruct.Month = 5;
 	RTC_initStruct.Date = 5;
@@ -58,6 +61,16 @@ int main(void)
 	}
 }
 
+void XTAL32K_Enable(void)
+{
+	uint32_t i;
+	
+  GPIO_Init(GPIOD, PIN0, 0, 0, 0, 0);
+  GPIO_Init(GPIOA, PIN6, 0, 0, 0, 0);
+  
+	SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (7 << SYS_XTALCR_32KDRV_Pos);
+	for(i = 0; i < 1000; i++) __NOP();
+}
 
 void RTC_GPIOD_Handler(void)
 {
