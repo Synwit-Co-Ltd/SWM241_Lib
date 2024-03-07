@@ -1,8 +1,9 @@
 #include "SWM241.h"
 
+#define USE_XTAL32K 0
 
+void XTAL32K_Enable(void);
 RTC_AlarmStructure RTC_AlarmStruct;
-
 
 int main(void)
 {	
@@ -16,7 +17,12 @@ int main(void)
 	GPIO_SetBit(GPIOA, PIN5);						//点亮LED
 	for(i = 0; i < SystemCoreClock/2; i++);			//延时，防止上电后SWD立即切掉无法下载程序
 	
-	RTC_initStruct.clksrc = RTC_CLKSRC_LRC32K;
+#if USE_XTAL32K  
+  XTAL32K_Enable();
+	RTC_initStruct.clksrc = RTC_CLKSRC_XTAL32K;  
+#else
+  RTC_initStruct.clksrc = RTC_CLKSRC_LRC32K;
+#endif
 	RTC_initStruct.Year = 2016;
 	RTC_initStruct.Month = 5;
 	RTC_initStruct.Date = 5;
@@ -51,6 +57,16 @@ int main(void)
 	}
 }
 
+void XTAL32K_Enable(void)
+{
+	uint32_t i;
+	
+  GPIO_Init(GPIOD, PIN0, 0, 0, 0, 0);
+  GPIO_Init(GPIOA, PIN6, 0, 0, 0, 0);
+  
+	SYS->XTALCR |= (1 << SYS_XTALCR_32KON_Pos) | (7 << SYS_XTALCR_32KDRV_Pos);
+	for(i = 0; i < 1000; i++) __NOP();
+}
 
 void RTC_GPIOD_Handler(void)
 {
