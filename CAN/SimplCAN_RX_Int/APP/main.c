@@ -1,14 +1,18 @@
 #include "SWM241.h"
 
-#include "CircleBuffer.h"
 
-CircleBuffer_t CirBuf;
+/* 测试条件：SWM221 <==CAN_RX/TX==> CAN 收发器（如 TJA1050）<==CAN_H/L==> CAN 分析仪
+ * 错误处理演示：
+ *	1、将 CAN 收发器与 CAN 分析仪断开，触发 ACK 错误，CAN->TXERR 从 0 递增到 128，然后保持不变
+ *	2、将 SWM221 与 CAN 收发器断开，触发位错误，CAN->TXERR 继续递增到 255，触发 Bus Off，CAN->CR.RST 自动置 1，CAN 模块处于复位状态
+ *	3、ISR 中在检测到 Bus Off 后执行 CAN_Open(CAN0) 使 CAN 模块退出复位状态，此时将上面断开的连接恢复，CAN->TXERR 将逐渐递减到0，CAN 模块恢复正常工作
+*/
+
 
 void SerialInit(void);
 
 int main(void)
-{	
-	uint32_t i;
+{
 	CAN_InitStructure CAN_initStruct;
 	
 	SystemInit();
@@ -25,8 +29,10 @@ int main(void)
 	CAN_initStruct.Baudrate = 50000;
 	CAN_initStruct.RXNotEmptyIEn = 1;
 	CAN_initStruct.ArbitrLostIEn = 0;
-	CAN_initStruct.ErrPassiveIEn = 0;
+	CAN_initStruct.ErrPassiveIEn = 1;
 	CAN_Init(CAN, &CAN_initStruct);
+	
+	CAN_INTEn(CAN, CAN_IT_ERR_WARN | CAN_IT_RX_OVERFLOW);
 	
 	CAN_SetFilter32b(CAN, CAN_FILTER_1, 0x00122122, 0x1FFFFFFE);		//接收ID为0x00122122、0x00122123的扩展包
 	CAN_SetFilter16b(CAN, CAN_FILTER_2, 0x122, 0x7FE, 0x101, 0x7FF);	//接收ID为0x122、123、0x101的标准包
@@ -38,20 +44,14 @@ int main(void)
 	
 	while(1==1)
 	{
-		CAN_RXMessage msg;
+		uint8_t tx_data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 		
-		if(CirBuf_Read(&CirBuf, &msg, 1))
-		{
-			if(msg.size > 0)
-			{
-				printf("\r\nReceive %s: %08X, ", msg.format == CAN_FRAME_STD ? "STD" : "EXT", msg.id);
-				for(i = 0; i < msg.size; i++) printf("%02X, ", msg.data[i]);
-			}
-			else if(msg.remote == 1)	//远程帧
-			{
-				printf("\r\nReceive %s Remote Request", msg.format == CAN_FRAME_STD ? "STD" : "EXT");
-			}
-		}
+		CAN_Transmit(CAN, CAN_FRAME_STD, 0x133, tx_data, 8, 1);
+		while(CAN_TXComplete(CAN) == 0) __NOP();
+		
+		printf("\r\nCAN->TXERR: %d\r\n", CAN->TXERR);
+		
+		for(int i = 0; i < SystemCoreClock / 16; i++) __NOP();
 	}
 }
 
@@ -59,17 +59,54 @@ int main(void)
 void TIMR0_Handler(void)
 //void CAN_Handler(void)
 {
-	CAN_RXMessage msg;
-	
 	uint32_t int_sr = CAN_INTStat(CAN);
 	
 	TIMR_INTClr(TIMR0);
 	
 	if(int_sr & CAN_IF_RXDA_Msk)
 	{
+		CAN_RXMessage msg;
+		
 		CAN_Receive(CAN, &msg);
 		
-		CirBuf_Write(&CirBuf, &msg, 1);
+		if(msg.size > 0)
+		{
+			printf("\r\nReceive %s: %08X, ", msg.format == CAN_FRAME_STD ? "STD" : "EXT", msg.id);
+			for(int i = 0; i < msg.size; i++) printf("%02X, ", msg.data[i]);
+		}
+		else if(msg.remote == 1)	//远程帧
+		{
+			printf("\r\nReceive %s Remote Request", msg.format == CAN_FRAME_STD ? "STD" : "EXT");
+		}
+	}
+	
+	if(int_sr & CAN_IF_RXOV_Msk)
+	{
+		printf("\r\nCAN RX Overflow\r\n");
+		
+		CAN_Close(CAN);
+		for(int i = 0; i < CyclesPerUs; i++) __NOP();
+		CAN_Open(CAN);
+	}
+	
+	if(int_sr & CAN_IF_ERRWARN_Msk)
+	{
+		if(CAN->SR & CAN_SR_BUSOFF_Msk)
+		{
+			printf("\r\nCAN Bus Off\r\n");
+			printf("\r\nCAN->CR.RST = %d\r\n", CAN->CR & CAN_CR_RST_Msk ? 1 : 0);
+			
+			CAN_Open(CAN);			//Bus Off recovery
+		}
+		else if(CAN->SR & CAN_SR_ERRWARN_Msk)
+		{
+			printf("\r\nCAN Error Warning\r\n");
+		}
+	}
+	
+	if(int_sr & CAN_IF_ERRPASS_Msk)
+	{
+		printf("\r\nCAN Error Passive\r\n");
 	}
 }
 
