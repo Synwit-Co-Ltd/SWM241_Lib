@@ -41,10 +41,10 @@ int main(void)
 		
 		TIMR_Stop(TIMR5);
 		TIMR_Start(TIMR5);
-		TIMR_INTClr(TIMR5);
+		TIMR_INTClr(TIMR5, TIMR_IT_TO);
 		while(!LIN_Rcv_Complete)
 		{
-			if(TIMR_INTStat(TIMR5))	// 20ms 未接收到数据，接收超时
+			if(TIMR_INTStat(TIMR5, TIMR_IT_TO))	// 20ms 未接收到数据，接收超时
 			{
 				goto retry;
 			}
@@ -154,7 +154,7 @@ void UART1_Handler(void)
 void TIMR4_Handler(void)
 {
 	TIMR_Stop(TIMR4);
-	TIMR_INTClr(TIMR4);
+	TIMR_INTClr(TIMR4, TIMR_IT_TO);
 	
 	UART_WriteByte(UART1, 0x55);
 	UART_WriteByte(UART1, UART_LIN_IDParity(LIN_Now_ID));

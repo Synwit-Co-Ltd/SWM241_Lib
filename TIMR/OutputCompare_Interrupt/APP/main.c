@@ -24,9 +24,9 @@ void TIMR2_Handler(void)
 {
 	static uint32_t times = 0;
 	
-	if(TIMR_OC_INTStat(TIMR2))
+	if(TIMR_INTStat(TIMR2, TIMR_IT_OC))
 	{
-		TIMR_OC_INTClr(TIMR2);
+		TIMR_INTClr(TIMR2, TIMR_IT_OC);
 		
 		if(++times == 6)
 		{

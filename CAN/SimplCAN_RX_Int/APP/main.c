@@ -61,7 +61,7 @@ void TIMR0_Handler(void)
 {
 	uint32_t int_sr = CAN_INTStat(CAN);
 	
-	TIMR_INTClr(TIMR0);
+	TIMR_INTClr(TIMR0, TIMR_IT_TO);
 	
 	if(int_sr & CAN_IF_RXDA_Msk)
 	{

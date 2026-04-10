@@ -46,15 +46,15 @@ void TestSignal(void)
 
 void TIMR2_Handler(void)
 {
-	if(TIMR_IC_CaptureH_INTStat(TIMR2))
+	if(TIMR_INTStat(TIMR2, TIMR_IT_IC_HIGH))
 	{
-		TIMR_IC_CaptureH_INTClr(TIMR2);
+		TIMR_INTClr(TIMR2, TIMR_IT_IC_HIGH);
 		
 		printf("H: %d\r\n", TIMR_IC_GetCaptureH(TIMR2));
 	}
-	else if(TIMR_IC_CaptureL_INTStat(TIMR2))
+	else if(TIMR_INTStat(TIMR2, TIMR_IT_IC_LOW))
 	{
-		TIMR_IC_CaptureL_INTClr(TIMR2);
+		TIMR_INTClr(TIMR2, TIMR_IT_IC_LOW);
 		
 		printf("L: %d\r\n", TIMR_IC_GetCaptureL(TIMR2));
 	}

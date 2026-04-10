@@ -7,9 +7,17 @@
 #define TIMR_MODE_OC		((2 << 2) | 0)	//输出比较
 #define TIMR_MODE_COUNTER	((0 << 2) | 2)	//计数上升沿
 
+
 #define TIMR_ICEDGE_BOTH	0
 #define TIMR_ICEDGE_RISE	1
 #define TIMR_ICEDGE_FALL	2
+
+
+/* Interrupt Type */
+#define TIMR_IT_TO			TIMR_IE_TO_Msk		// timeout
+#define TIMR_IT_OC			TIMR_IE_OC_Msk		// output compare match
+#define TIMR_IT_IC_LOW		TIMR_IE_ICR_Msk		// input capture low level
+#define TIMR_IT_IC_HIGH		TIMR_IE_ICF_Msk		// input capture high level
 
 
 void TIMR_Init(TIMR_TypeDef * TIMRx, uint32_t mode, uint32_t clkdiv, uint32_t period, uint32_t int_en);	//定时器/计数器初始化
@@ -22,10 +30,10 @@ void TIMR_SetPeriod(TIMR_TypeDef * TIMRx, uint32_t period);		//设置定时/计数周期
 uint32_t TIMR_GetPeriod(TIMR_TypeDef * TIMRx);					//获取定时/计数周期
 uint32_t TIMR_GetCurValue(TIMR_TypeDef * TIMRx);				//获取当前计数值
 
-void TIMR_INTEn(TIMR_TypeDef * TIMRx);							//使能中断
-void TIMR_INTDis(TIMR_TypeDef * TIMRx);							//禁能中断
-void TIMR_INTClr(TIMR_TypeDef * TIMRx);							//清除中断标志
-uint32_t TIMR_INTStat(TIMR_TypeDef * TIMRx);					//获取中断状态
+void TIMR_INTEn(TIMR_TypeDef * TIMRx, uint32_t it);
+void TIMR_INTDis(TIMR_TypeDef * TIMRx, uint32_t it);
+void TIMR_INTClr(TIMR_TypeDef * TIMRx, uint32_t it);
+uint32_t TIMR_INTStat(TIMR_TypeDef * TIMRx, uint32_t it);
 
 
 void TIMR_OC_Init(TIMR_TypeDef * TIMRx, uint16_t match, uint32_t match_int_en, uint32_t init_lvl);
@@ -36,24 +44,11 @@ void TIMR_OC_OutputDis(TIMR_TypeDef * TIMRx, uint32_t level);
 void TIMR_OC_SetMatch(TIMR_TypeDef * TIMRx, uint16_t match);
 uint16_t TIMR_OC_GetMatch(TIMR_TypeDef * TIMRx);
 
-void TIMR_OC_INTEn(TIMR_TypeDef * TIMRx);
-void TIMR_OC_INTDis(TIMR_TypeDef * TIMRx);
-void TIMR_OC_INTClr(TIMR_TypeDef * TIMRx);
-uint32_t TIMR_OC_INTStat(TIMR_TypeDef * TIMRx);
-
 
 void TIMR_IC_Init(TIMR_TypeDef * TIMRx, uint32_t start_lvl, uint32_t captureH_int_en, uint32_t captureL_int_en);
 
 uint32_t TIMR_IC_GetCaptureH(TIMR_TypeDef * TIMRx);
 uint32_t TIMR_IC_GetCaptureL(TIMR_TypeDef * TIMRx);
 
-void TIMR_IC_CaptureH_INTEn(TIMR_TypeDef * TIMRx);
-void TIMR_IC_CaptureH_INTDis(TIMR_TypeDef * TIMRx);
-void TIMR_IC_CaptureH_INTClr(TIMR_TypeDef * TIMRx);
-uint32_t TIMR_IC_CaptureH_INTStat(TIMR_TypeDef * TIMRx);
-void TIMR_IC_CaptureL_INTEn(TIMR_TypeDef * TIMRx);
-void TIMR_IC_CaptureL_INTDis(TIMR_TypeDef * TIMRx);
-void TIMR_IC_CaptureL_INTClr(TIMR_TypeDef * TIMRx);
-uint32_t TIMR_IC_CaptureL_INTStat(TIMR_TypeDef * TIMRx);
 
 #endif //__SWM241_TIMR_H__

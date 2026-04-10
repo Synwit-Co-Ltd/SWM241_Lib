@@ -20,7 +20,7 @@ int main(void)
 
 void TIMR2_Handler(void)
 {
-	TIMR_INTClr(TIMR2);
+	TIMR_INTClr(TIMR2, TIMR_IT_TO);
 	
 	GPIO_InvBit(GPIOA, PIN5);
 }
