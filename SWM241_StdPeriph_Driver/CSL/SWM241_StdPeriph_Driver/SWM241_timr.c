@@ -300,9 +300,9 @@ void TIMR_OC_Init(TIMR_TypeDef * TIMRx, uint16_t match, uint32_t match_int_en, u
 	if(init_lvl) TIMRx->OCCR |=  (1 << TIMR_OCCR_INITLVL_Pos);
 	else         TIMRx->OCCR &= ~(1 << TIMR_OCCR_INITLVL_Pos);
 	
-	TIMRx->IF = (1 << TIMR_IF_OC0_Pos);		//清除中断标志
-	if(match_int_en) TIMRx->IE |=  (1 << TIMR_IE_OC0_Pos);
-	else             TIMRx->IE &= ~(1 << TIMR_IE_OC0_Pos);
+	TIMRx->IF = (1 << TIMR_IF_OC_Pos);		//清除中断标志
+	if(match_int_en) TIMRx->IE |=  (1 << TIMR_IE_OC_Pos);
+	else             TIMRx->IE &= ~(1 << TIMR_IE_OC_Pos);
 	
 	switch((uint32_t)TIMRx)
 	{
@@ -402,7 +402,7 @@ uint16_t TIMR_OC_GetMatch(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_INTEn(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IE |= (1 << TIMR_IE_OC0_Pos);
+	TIMRx->IE |= (1 << TIMR_IE_OC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -414,7 +414,7 @@ void TIMR_OC_INTEn(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_INTDis(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IE &= ~(1 << TIMR_IE_OC0_Pos);
+	TIMRx->IE &= ~(1 << TIMR_IE_OC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -426,7 +426,7 @@ void TIMR_OC_INTDis(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 void TIMR_OC_INTClr(TIMR_TypeDef * TIMRx)
 {
-	TIMRx->IF = (1 << TIMR_IF_OC0_Pos);
+	TIMRx->IF = (1 << TIMR_IF_OC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -438,7 +438,7 @@ void TIMR_OC_INTClr(TIMR_TypeDef * TIMRx)
 ******************************************************************************************************************************************/
 uint32_t TIMR_OC_INTStat(TIMR_TypeDef * TIMRx)
 {
-	return (TIMRx->IF >> TIMR_IF_OC0_Pos) & 1;
+	return (TIMRx->IF >> TIMR_IF_OC_Pos) & 1;
 }
 
 /****************************************************************************************************************************************** 
