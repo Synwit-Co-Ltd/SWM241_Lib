@@ -33,8 +33,13 @@ __ramfunc
 #endif
 void EnterSleepMode(void)
 {
-	__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	
 	SYS->SLEEP |= (1 << SYS_SLEEP_SLEEP_Pos);
+	
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
 }
 
 
@@ -43,6 +48,11 @@ __ramfunc
 #endif
 void EnterStopMode(void)
 {
-	__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	
 	SYS->SLEEP |= (1 << SYS_SLEEP_STOP_Pos);
+	
+	__NOP();__NOP();__NOP();__NOP();__NOP();
+	__NOP();__NOP();__NOP();__NOP();__NOP();
 }
