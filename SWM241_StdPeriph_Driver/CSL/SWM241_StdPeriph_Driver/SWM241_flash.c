@@ -38,11 +38,11 @@ const IAP_Flash_Write_t IAP_Flash_Write = (IAP_Flash_Write_t)0x11000451;
 ******************************************************************************************************************************************/
 uint32_t FLASH_Erase(uint32_t addr)
 {	
-	__disable_irq();
+	uint32_t primask = SW_enter_critical();
 	
 	IAP_Flash_Erase(addr / 0x400, 0x0B11FFAC);
 		
-	__enable_irq();
+	SW_exit_critical(primask);
 	
 	return FLASH_RES_OK;
 }
@@ -59,11 +59,11 @@ uint32_t FLASH_Erase(uint32_t addr)
 ******************************************************************************************************************************************/
 uint32_t FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
 {
-	__disable_irq();
+	uint32_t primask = SW_enter_critical();
 	
 	IAP_Flash_Write(addr, (uint32_t)buff, count);
 		
-	__enable_irq();
+	SW_exit_critical(primask);
 	
 	return FLASH_RES_OK;
 }
